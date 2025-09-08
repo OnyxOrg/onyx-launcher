@@ -353,7 +353,9 @@ INT __stdcall WinMain(HINSTANCE, HINSTANCE, LPSTR, int)
                         draw->Text("relique", colors::Main);
 
                         SetCursorPos({ 95, 50 });
+                        PushFont(fonts->userUidFont);
                         draw->Text("UID: Unknown", colors::Lwhite2);
+                        PopFont();
 
                         {
                             std::string role = "User";
