@@ -40,7 +40,7 @@ bool Items::Profile(const std::string& name, const std::string& role, ID3D11Shad
     window->DrawList->AddText(it.p + vec2(50, size.y * 0.5f - 15), h->CO(namec), name.c_str());
 
     // Role uses independent font and size
-    PushFont(fonts->RennerRole);
+    PushFont(fonts->userRoleFont);
     window->DrawList->AddText(it.p + vec2(50, size.y * 0.5f + 2), h->CO(rolec), role.c_str());
     PopFont();
 
