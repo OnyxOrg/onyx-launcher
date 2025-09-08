@@ -24,7 +24,7 @@ void Custom::Banner(const std::string& title, const std::string& message, ID3D11
 	const auto& window = GetCurrentWindow();
 
 	vec2 pos = window->DC.CursorPos;
-	vec2 size = vec2(window->Size.x + 160 - GetCursorPosX() * 2, 160);
+	vec2 size = vec2(window->Size.x + 160 - GetCursorPosX() * 2, 180);
 
 	ItemSize(size);
 	ItemAdd({ pos, pos + size }, 0);
