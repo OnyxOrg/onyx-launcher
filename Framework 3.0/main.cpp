@@ -123,13 +123,29 @@ INT __stdcall WinMain(HINSTANCE, HINSTANCE, LPSTR, int)
                     {
                         if (alpha->tab == login)
                         {
-                            alpha->index = home;
-                            subalpha->index = dashboard; // make sure to change this aswell
+                            bool _userEmpty = strlen(loginUsr) == 0;
+                            bool _passEmpty = strlen(loginPas) == 0;
+                            items->SetInputError("Username", _userEmpty);
+                            items->SetInputError("Password", _passEmpty);
+                            if (!_userEmpty && !_passEmpty)
+                            {
+                                alpha->index = home;
+                                subalpha->index = dashboard; // make sure to change this aswell
+                            }
                         }
                         else
                         {
-                            // After successful sign up, redirect to Sign in page
-                            alpha->index = login;
+                            bool _userEmpty = strlen(registerUsr) == 0;
+                            bool _passEmpty = strlen(registerPas) == 0;
+                            bool _licEmpty = strlen(licbuf) == 0;
+                            items->SetInputError("Username", _userEmpty);
+                            items->SetInputError("Password", _passEmpty);
+                            items->SetInputError("License key", _licEmpty);
+                            if (!_userEmpty && !_passEmpty && !_licEmpty)
+                            {
+                                // After successful sign up, redirect to Sign in page
+                                alpha->index = login;
+                            }
                         }
                     }
 

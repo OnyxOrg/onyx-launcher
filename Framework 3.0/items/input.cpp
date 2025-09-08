@@ -1,5 +1,8 @@
 #include "custom.hpp"
 
+// Error state per input name
+static std::map<std::string, bool> g_inputError;
+
 namespace inputcol
 {
 	vec4 bg = colors::ItemBg;
@@ -44,7 +47,11 @@ bool Items::Input(const std::string& name, const std::string& iconA, const std::
 	PushStyleColor(ImGuiCol_FrameBg, colors::Transparent);
 
 	window->DrawList->AddRectFilled(pos, pos + vec2(size.x, GetFrameHeight()), h->CO(w.bg), rounding);
-	window->DrawList->AddRect(pos, pos + vec2(size.x, GetFrameHeight()), h->CO(border), rounding);
+	bool _hasText = strlen(buf) > 0;
+	if (_hasText && g_inputError[name])
+		g_inputError[name] = false;
+	vec4 _borderCol = (g_inputError[name] && !_hasText) ? colors::Red : border;
+	window->DrawList->AddRect(pos, pos + vec2(size.x, GetFrameHeight()), h->CO(_borderCol), rounding);
 
 	//should be done with shadow rect, but it doesnt support that ammount of rounding in a short radius (could be done if it the item hasn't had transparent background tho)
 	//window->DrawList->AddShadowRect(pos, pos + vec2(size.x, GetFrameHeight()), h->CO({colors::Main.x, colors::Main.y, colors::Main.z, 0.5}), 15, {0, 0}, ImDrawFlags_ShadowCutOutShapeBackground | ImDrawFlags_RoundCornersMask_, 10000);
@@ -92,4 +99,14 @@ bool Items::Input(const std::string& name, const std::string& iconA, const std::
 	PopStyleVar();
 
 	return r;
+}
+
+void Items::SetInputError(const std::string& name, bool error)
+{
+	g_inputError[name] = error;
+}
+
+void Items::ClearInputError(const std::string& name)
+{
+	g_inputError[name] = false;
 }

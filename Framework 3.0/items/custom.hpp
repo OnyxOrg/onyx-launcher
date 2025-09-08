@@ -90,5 +90,7 @@ struct Items
 	bool Product(const std::string& label, const std::string& expirationDate, ProductStatus status, ID3D11ShaderResourceView* tex);
 	bool Profile(const std::string& name, const std::string& role, ID3D11ShaderResourceView* tex);
 	bool ButtonIcon(const std::string& label, const std::string& icon, const vec2& size);
+	void SetInputError(const std::string& name, bool error);
+	void ClearInputError(const std::string& name);
 
 }; inline std::unique_ptr<Items> items = std::make_unique<Items>();
