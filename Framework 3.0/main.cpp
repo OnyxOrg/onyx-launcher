@@ -185,7 +185,7 @@ INT __stdcall WinMain(HINSTANCE, HINSTANCE, LPSTR, int)
                         if (items->ImageButton("discord", images->discordIcon, { 21, 15 }))
                         {
                             std::thread([&] {
-                                system("start https://discord.gg/7bcTMxvmAU");
+                                ShellExecuteW(nullptr, L"open", L"https://discord.gg/7bcTMxvmAU", nullptr, nullptr, SW_SHOWNORMAL);
                             }).detach();
                         }
 
@@ -233,7 +233,7 @@ INT __stdcall WinMain(HINSTANCE, HINSTANCE, LPSTR, int)
                 if (items->TextButton("       Support", "dc_sp", colors::Lwhite))
                 {
                     std::thread([&] {
-                        system("start https://discord.gg/7bcTMxvmAU");
+                        ShellExecuteW(nullptr, L"open", L"https://discord.gg/7bcTMxvmAU", nullptr, nullptr, SW_SHOWNORMAL);
                     }).detach();
                 }
 

@@ -14,9 +14,11 @@
 #define DISCORD		"j"
 
 #pragma comment(lib, "D3DX11.lib")
+#pragma comment(lib, "Shell32.lib")
 
 #include <iostream>
 #include <windows.h>
+#include <shellapi.h>
 #include <d3d11.h>
 #include <D3DX11tex.h>
 #include <dwmapi.h>
