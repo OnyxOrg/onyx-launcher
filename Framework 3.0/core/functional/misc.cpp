@@ -101,6 +101,7 @@ bool Fonts::RenderFonts()
     Pass = EFONT(_Pass, 25, cfg);
     Xirod = EFONT(_Xirod, 30, cfg);
     RennerM = EFONT(_RennerM, 16, cfg);
+    RennerRole = EFONT(_RennerM, 14, cfg); // independent role font size
 
     return true;
 }

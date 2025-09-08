@@ -36,8 +36,13 @@ bool Items::Profile(const std::string& name, const std::string& role, ID3D11Shad
 
     window->DrawList->AddRectFilled(it.p, it.p + size, h->CO(it.bg), 8);
     window->DrawList->AddImageRounded((ImTextureID)tex, it.p + vec2(5, size.y * 0.5f - 35 * 0.5f), it.p + vec2(40, size.y * 0.5f + 35 * 0.5f), {}, { 1, 1 }, h->CO(colors::White), 1000);
+    // Username uses whatever font is currently pushed by caller
     window->DrawList->AddText(it.p + vec2(50, size.y * 0.5f - 15), h->CO(namec), name.c_str());
-    window->DrawList->AddText(it.p + vec2(50, size.y * 0.5f), h->CO(rolec), role.c_str());
+
+    // Role uses independent font and size
+    PushFont(fonts->RennerRole);
+    window->DrawList->AddText(it.p + vec2(50, size.y * 0.5f + 2), h->CO(rolec), role.c_str());
+    PopFont();
 
 	if (hov)
 		SetMouseCursor(ImGuiMouseCursor_Hand);
