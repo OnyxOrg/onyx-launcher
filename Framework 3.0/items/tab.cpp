@@ -8,7 +8,7 @@ namespace tabcol
 	vec4 bgC = colors::Transparent;
 	vec4 bgAct = colors::ItemBg;
 
-	float rounding = 5;
+	float rounding = 10;
 }
 
 struct Tabs

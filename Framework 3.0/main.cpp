@@ -222,13 +222,13 @@ INT __stdcall WinMain(HINSTANCE, HINSTANCE, LPSTR, int)
 
                 PushFont(fonts->RennerM);
                 SetCursorPos({ 15, window->Size.y - 58 });
-                if (items->Profile("reliquew", "Owner", images->profilePic)) subalpha->index = profile;
+                if (items->Profile("reliquew", "Member", images->profilePic)) subalpha->index = profile;
                 PopFont();
 
-                SetCursorPos({ 22, window->Size.y -100 });
+                SetCursorPos({ 22, window->Size.y - 106 });
                 Image((ImTextureID)images->discordIcon, { 20, 15 });
 
-                SetCursorPos({ 22, window->Size.y - 100 });
+                SetCursorPos({ 22, window->Size.y - 106 });
                 PushFont(fonts->RennerM);
                 if (items->TextButton("       Support", "dc_sp", colors::Lwhite))
                 {
@@ -332,7 +332,7 @@ INT __stdcall WinMain(HINSTANCE, HINSTANCE, LPSTR, int)
                         draw->Text("UUID: Unknown", colors::Lwhite2);
 
                         {
-                            std::string role = "Owner";
+                            std::string role = "Member";
                             vec2 roleSize = h->CT(role);
 
                             child->DrawList->AddRectFilled({ child->Pos.x + child->Size.x - (15 + roleSize.x) - 12, child->Pos.y + (child->Size.y - 25) / 2 }, { child->Pos.x + child->Size.x - 12, child->Pos.y + (child->Size.y - 25) / 2 + 25 }, h->CO(colors::Gray2), 8);

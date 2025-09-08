@@ -3,7 +3,7 @@
 namespace profilecol
 {
 	vec4 namec = colors::Main;
-	vec4 rolec = colors::Lwhite;
+	vec4 rolec = colors::RoleMember;
 }
 
 struct Profiles

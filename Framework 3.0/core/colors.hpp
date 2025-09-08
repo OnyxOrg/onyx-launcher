@@ -20,4 +20,6 @@ namespace colors
 
 	inline vec4 White = vec4(1, 1, 1, 1);
 	inline vec4 Transparent = vec4(0, 0, 0, 0);
+
+	inline vec4 RoleMember = rgba(0x4d, 0x52, 0x60, 255);
 }
