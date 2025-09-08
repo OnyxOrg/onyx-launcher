@@ -4,7 +4,7 @@ enum AnnouncementStatus
 {
 	updated,
 	feature,
-	improvement
+	bugfix
 };
 
 enum ProductStatus
@@ -18,14 +18,14 @@ inline std::map<AnnouncementStatus, vec4> AnnouncementColors =
 {
 	{ AnnouncementStatus::updated, colors::Main },
 	{ AnnouncementStatus::feature, colors::Green},
-	{ AnnouncementStatus::improvement, colors::Red }
+	{ AnnouncementStatus::bugfix, colors::Blue }
 }; // add more if needed
 
 inline std::map<AnnouncementStatus, std::string> AnnouncementLabels =
 {
 	{ AnnouncementStatus::updated, "UPDATED" },
 	{ AnnouncementStatus::feature, "FEATURE" },
-	{ AnnouncementStatus::improvement, "IMPROVEMENT" }
+	{ AnnouncementStatus::bugfix, "BUG FIX" }
 };
 
 inline std::map<ProductStatus, vec4> ProductColors =

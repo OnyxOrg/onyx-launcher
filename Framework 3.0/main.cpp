@@ -272,8 +272,8 @@ INT __stdcall WinMain(HINSTANCE, HINSTANCE, LPSTR, int)
 
                         items->Announcement("ONYX UPDATE 1.0", "Lorem ipsum dolor sit amet consectetur adipisicing elit. Possimus, perferendis\nipsum? Itaque, ea harum. Aliquam libero animi maxime ab, sapiente beatae maiores\nobcaecati quae. Modi officiis dolore delectus ullam rem?", "August 6, 2025", feature);
                         items->Announcement("ONYX UPDATE 0.4", "Lorem ipsum dolor sit amet consectetur adipisicing elit. Possimus, perferendis\nipsum? Itaque, ea harum. Aliquam libero animi maxime ab, sapiente beatae maiores\nobcaecati quae. Modi officiis dolore delectus ullam rem?", "August 6, 2025", updated);
-                        items->Announcement("ONYX UPDATE 0.1", "Lorem ipsum dolor sit amet consectetur adipisicing elit. Possimus, perferendis\nipsum? Itaque, ea harum. Aliquam libero animi maxime ab, sapiente beatae maiores\nobcaecati quae. Modi officiis dolore delectus ullam rem?", "August 6, 2025", improvement);
-                        items->Announcement("ONYX UPDATE 0.3", "Lorem ipsum dolor sit amet consectetur adipisicing elit. Possimus, perferendis\nipsum? Itaque, ea harum. Aliquam libero animi maxime ab, sapiente beatae maiores\nobcaecati quae. Modi officiis dolore delectus ullam rem?", "August 6, 2025", improvement);
+                        items->Announcement("ONYX UPDATE 0.1", "Lorem ipsum dolor sit amet consectetur adipisicing elit. Possimus, perferendis\nipsum? Itaque, ea harum. Aliquam libero animi maxime ab, sapiente beatae maiores\nobcaecati quae. Modi officiis dolore delectus ullam rem?", "August 6, 2025", bugfix);
+                        items->Announcement("ONYX UPDATE 0.3", "Lorem ipsum dolor sit amet consectetur adipisicing elit. Possimus, perferendis\nipsum? Itaque, ea harum. Aliquam libero animi maxime ab, sapiente beatae maiores\nobcaecati quae. Modi officiis dolore delectus ullam rem?", "August 6, 2025", bugfix);
                         
                         Spacing();
                         PopStyleVar(); // itemspacing
