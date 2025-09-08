@@ -140,7 +140,7 @@ INT __stdcall WinMain(HINSTANCE, HINSTANCE, LPSTR, int)
                         if (items->ImageButton("discord", images->discordIcon, { 21, 15 }))
                         {
                             std::thread([&] {
-                                system("start https://discord.gg/7k7KnZt9br");
+                                system("start https://discord.gg/7bcTMxvmAU");
                             }).detach();
                         }
 
@@ -177,7 +177,7 @@ INT __stdcall WinMain(HINSTANCE, HINSTANCE, LPSTR, int)
 
                 PushFont(fonts->InterM[1]);
                 SetCursorPos({ 15, window->Size.y - 58 });
-                if (items->Profile("Baikzz", "User", images->profilePic)) subalpha->index = profile;
+                if (items->Profile("reliquew", "Owner", images->profilePic)) subalpha->index = profile;
                 PopFont();
 
                 SetCursorPos({ 22, window->Size.y -98 });
@@ -187,7 +187,7 @@ INT __stdcall WinMain(HINSTANCE, HINSTANCE, LPSTR, int)
                 if (items->TextButton("       Support", "dc_sp", colors::Lwhite))
                 {
                     std::thread([&] {
-                        system("start https://discord.gg/7k7KnZt9br");
+                        system("start https://discord.gg/7bcTMxvmAU");
                     }).detach();
                 }
 
@@ -199,7 +199,7 @@ INT __stdcall WinMain(HINSTANCE, HINSTANCE, LPSTR, int)
                 if (subalpha->tab == dashboard)
                 {
                     SetCursorPos({ 190, 27 });
-                    custom->Banner("DASHBOARD", "Welcome back, baikzz", images->banner);
+                    custom->Banner("Dashboard", "Welcome back, reliquew", images->banner);
 
                     SetCursorPos({ 190, 200 });
                     custom->BeginChild("News", { window->Size.x + 160 - GetCursorPosX() * 2, (window->Size.y - 200 - 50) - 10/*change this if you wanna change height*/});
@@ -280,13 +280,13 @@ INT __stdcall WinMain(HINSTANCE, HINSTANCE, LPSTR, int)
                         PushFont(fonts->InterM[2]);
 
                         SetCursorPos({ 95, 30 });
-                        draw->Text("Baikzz", colors::Main);
+                        draw->Text("reliquew", colors::Main);
 
                         SetCursorPos({ 95, 50 });
                         draw->Text("UUID: Unknown", colors::Lwhite2);
 
                         {
-                            std::string role = "User";
+                            std::string role = "Owner";
                             vec2 roleSize = h->CT(role);
 
                             child->DrawList->AddRectFilled({ child->Pos.x + child->Size.x - (15 + roleSize.x) - 12, child->Pos.y + (child->Size.y - 25) / 2 }, { child->Pos.x + child->Size.x - 12, child->Pos.y + (child->Size.y - 25) / 2 + 25 }, h->CO(colors::Gray2), 8);
