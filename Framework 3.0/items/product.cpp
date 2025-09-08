@@ -1,4 +1,5 @@
 #include "custom.hpp"
+#include <math.h>
 
 namespace productcol
 {
@@ -62,7 +63,14 @@ bool Items::Product(const std::string& label, const std::string& expirationDate,
 	window->DrawList->AddText(pos + vec2(6 + h->CT("Expires: ").x, size.y - h->CT("Expires: ").y - 27), h->CO(expireColor), expirationDate.c_str());
 
 	window->DrawList->AddText(pos + vec2(6, size.y - h->CT("Status: ").y - 10), h->CO(colors::Lwhite), "Status: ");
-	window->DrawList->AddText(pos + vec2(6 + h->CT("Status: ").x, size.y - h->CT("Status: ").y - 10), h->CO(statusCol), statusProd.c_str());
+
+	vec4 renderStatusCol = statusCol;
+	if (status == ProductStatus::Updating)
+	{
+		float t = (sinf((float)ImGui::GetTime() * 6.2831853f) * 0.5f + 0.5f); // smooth pulse
+		renderStatusCol.w = ImLerp(0.35f, 1.0f, t);
+	}
+	window->DrawList->AddText(pos + vec2(6 + h->CT("Status: ").x, size.y - h->CT("Status: ").y - 10), h->CO(renderStatusCol), statusProd.c_str());
 	PopFont();
 
 	if (hov)

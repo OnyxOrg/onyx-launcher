@@ -11,7 +11,7 @@ enum ProductStatus
 {
 	Online,
 	Offline,
-	Maintenance
+	Updating
 };
 
 inline std::map<AnnouncementStatus, vec4> AnnouncementColors =
@@ -32,14 +32,14 @@ inline std::map<ProductStatus, vec4> ProductColors =
 {
 	{ ProductStatus::Online, colors::Green },
 	{ ProductStatus::Offline, colors::Red },
-	{ ProductStatus::Maintenance, colors::Main }
+	{ ProductStatus::Updating, colors::Yellow }
 };
 
 inline std::map<ProductStatus, std::string> ProductLabels =
 {
 	{ ProductStatus::Online, "Online" },
 	{ ProductStatus::Offline, "Offline" },
-	{ ProductStatus::Maintenance, "Maintenance" }
+	{ ProductStatus::Updating, "Updating" }
 };
 
 //inline std::map

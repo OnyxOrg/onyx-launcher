@@ -240,7 +240,7 @@ INT __stdcall WinMain(HINSTANCE, HINSTANCE, LPSTR, int)
 
                 PushFont(fonts->RennerM);
                 SetCursorPos({ 15, window->Size.y - 58 });
-                if (items->Profile("reliquew", "Member", images->profilePic)) subalpha->index = profile;
+                if (items->Profile("relique", "User", images->profilePic)) subalpha->index = profile;
                 PopFont();
 
                 SetCursorPos({ 22, window->Size.y - 106 });
@@ -263,7 +263,7 @@ INT __stdcall WinMain(HINSTANCE, HINSTANCE, LPSTR, int)
                 if (subalpha->tab == dashboard)
                 {
                     SetCursorPos({ 190, 27 });
-                    custom->Banner("Dashboard", "Welcome back, reliquew", images->banner);
+                    custom->Banner("Dashboard", "Welcome back, relique", images->banner);
 
                     SetCursorPos({ 190, 200 });
                     custom->BeginChild("News", { window->Size.x + 160 - GetCursorPosX() * 2, (window->Size.y - 200 - 50) - 10/*change this if you wanna change height*/});
@@ -298,7 +298,7 @@ INT __stdcall WinMain(HINSTANCE, HINSTANCE, LPSTR, int)
                     }
 
                     SameLine();
-                    if (items->Product("Supernova", "3 Days", ProductStatus::Maintenance, images->product))
+                    if (items->Product("Supernova", "3 Days", ProductStatus::Updating, images->product))
                     {
 
                     }
@@ -339,18 +339,24 @@ INT __stdcall WinMain(HINSTANCE, HINSTANCE, LPSTR, int)
                         const auto& child = GetCurrentWindow();
 
                         SetCursorPos({ 23, (child->Size.y - 60) / 2 });
-                        Image((ImTextureID)images->profilePic, { 60, 60 });
+                        {
+                            vec2 avatarSize = { 60, 60 };
+                            vec2 avatarPos = child->DC.CursorPos;
+                            float rounding = avatarSize.y * 0.5f; // circle
+                            child->DrawList->AddImageRounded((ImTextureID)images->profilePic, avatarPos, avatarPos + avatarSize, {}, { 1, 1 }, h->CO(colors::White), rounding);
+                            child->DrawList->AddRect(avatarPos, avatarPos + avatarSize, h->CO(colors::Gray), rounding, 0, 1.0f); // light border
+                        }
 
                         PushFont(fonts->InterM[2]);
 
                         SetCursorPos({ 95, 30 });
-                        draw->Text("reliquew", colors::Main);
+                        draw->Text("relique", colors::Main);
 
                         SetCursorPos({ 95, 50 });
-                        draw->Text("UUID: Unknown", colors::Lwhite2);
+                        draw->Text("UID: Unknown", colors::Lwhite2);
 
                         {
-                            std::string role = "Member";
+                            std::string role = "User";
                             vec2 roleSize = h->CT(role);
 
                             child->DrawList->AddRectFilled({ child->Pos.x + child->Size.x - (15 + roleSize.x) - 12, child->Pos.y + (child->Size.y - 25) / 2 }, { child->Pos.x + child->Size.x - 12, child->Pos.y + (child->Size.y - 25) / 2 + 25 }, h->CO(colors::Gray2), 8);

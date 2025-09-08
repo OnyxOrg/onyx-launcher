@@ -17,6 +17,7 @@ namespace colors
 
 	inline vec4 Green = rgba(14, 179, 125, 255);
 	inline vec4 Red = rgba(200, 37, 37, 255);
+	inline vec4 Yellow = rgba(255, 199, 0, 255);
 
 	inline vec4 White = vec4(1, 1, 1, 1);
 	inline vec4 Transparent = vec4(0, 0, 0, 0);
