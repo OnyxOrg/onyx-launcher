@@ -123,6 +123,7 @@ struct Fonts
 	ImFont* Xirod;
 	ImFont* RennerM;
 	ImFont* RennerRole; // font used only for the user role text
+	ImFont* discordSupportFont; // independent font size for dashboard Support label
 	bool RenderFonts();
 }; inline std::unique_ptr<Fonts> fonts = std::make_unique<Fonts>();
 

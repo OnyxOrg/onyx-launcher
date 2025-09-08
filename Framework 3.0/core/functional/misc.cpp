@@ -102,6 +102,7 @@ bool Fonts::RenderFonts()
     Xirod = EFONT(_Xirod, 30, cfg);
     RennerM = EFONT(_RennerM, 16, cfg);
     RennerRole = EFONT(_RennerM, 14, cfg); // independent role font size
+    discordSupportFont = EFONT(_RennerM, 15, cfg); // independent Support font size
 
     return true;
 }

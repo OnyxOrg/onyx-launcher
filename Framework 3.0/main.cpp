@@ -247,7 +247,7 @@ INT __stdcall WinMain(HINSTANCE, HINSTANCE, LPSTR, int)
                 Image((ImTextureID)images->discordIcon, { 20, 15 });
 
                 SetCursorPos({ 22, window->Size.y - 106 });
-                PushFont(fonts->RennerM);
+                PushFont(fonts->discordSupportFont);
                 if (items->TextButton("       Support", "dc_sp", colors::Lwhite))
                 {
                     std::thread([&] {
