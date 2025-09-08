@@ -9,6 +9,23 @@ bool remember;
 
 INT __stdcall WinMain(HINSTANCE, HINSTANCE, LPSTR, int)
 {
+    // Single-instance guard: prevent multiple instances
+    const wchar_t* kSingleInstanceMutexName = L"Global\\OnyxFramework3_SingleInstance";
+    HANDLE singleInstanceMutex = CreateMutexW(nullptr, FALSE, kSingleInstanceMutexName);
+    if (singleInstanceMutex == nullptr)
+        return 0;
+    if (GetLastError() == ERROR_ALREADY_EXISTS)
+    {
+        HWND existing = FindWindowW(L"Window", L"Window");
+        if (existing)
+        {
+            ShowWindow(existing, SW_RESTORE);
+            SetForegroundWindow(existing);
+        }
+        CloseHandle(singleInstanceMutex);
+        return 0;
+    }
+
     // if you want to add / remove the window background, navigate to main.hpp and add / remove the define macro ``WINDOW_BG``
     window->Initialize(L"Window"); // creates the whole window, the arg will be the window name
     window->Blur();
@@ -336,5 +353,6 @@ INT __stdcall WinMain(HINSTANCE, HINSTANCE, LPSTR, int)
         window->CleanImGui();
     }
     window->CleanWindow();
+    CloseHandle(singleInstanceMutex);
     return 0;
 }
