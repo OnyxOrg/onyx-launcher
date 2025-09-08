@@ -40,7 +40,7 @@ INT __stdcall WinMain(HINSTANCE, HINSTANCE, LPSTR, int)
     EIMAGE(window->Dvc, _Logo, images->logo);
     EIMAGE(window->Dvc, _Banner, images->banner);
     EIMAGE(window->Dvc, _Product, images->product);
-    EIMAGE(window->Dvc, _ProfilePic, images->profilePic);
+    EIMAGE(window->Dvc, _DefaultProfilePic, images->profilePic);
 
     HWND* hRef = &window->hWindow;
 
@@ -262,7 +262,7 @@ INT __stdcall WinMain(HINSTANCE, HINSTANCE, LPSTR, int)
 
                 if (subalpha->tab == dashboard)
                 {
-                    SetCursorPos({ 190, 27 });
+                    SetCursorPos({ 190, 33 });
                     custom->Banner("Dashboard", "Welcome back, relique", images->banner);
 
                     SetCursorPos({ 190, 200 });
@@ -359,10 +359,17 @@ INT __stdcall WinMain(HINSTANCE, HINSTANCE, LPSTR, int)
 
                         {
                             std::string role = "User";
+                            PushFont(fonts->profileRoleFont);
                             vec2 roleSize = h->CT(role);
 
-                            child->DrawList->AddRectFilled({ child->Pos.x + child->Size.x - (15 + roleSize.x) - 12, child->Pos.y + (child->Size.y - 25) / 2 }, { child->Pos.x + child->Size.x - 12, child->Pos.y + (child->Size.y - 25) / 2 + 25 }, h->CO(colors::Gray2), 8);
-                            child->DrawList->AddText({ child->Pos.x + child->Size.x - (15 + roleSize.x) - 12 + (15 + roleSize.x - roleSize.x) / 2, child->Pos.y + (child->Size.y - 25) / 2 + (25 - roleSize.y) / 2 }, h->CO(colors::Lwhite2), role.c_str());
+                            float rightPadding = 14; // move left by increasing padding
+                            vec2 rectMin = { child->Pos.x + child->Size.x - (15 + roleSize.x) - rightPadding, child->Pos.y + (child->Size.y - 25) / 2 - 2 };
+                            vec2 rectMax = { child->Pos.x + child->Size.x - rightPadding, rectMin.y + 25 };
+                            child->DrawList->AddRectFilled(rectMin, rectMax, h->CO(colors::Gray2), 8);
+
+                            vec2 textPos = { rectMin.x + (rectMax.x - rectMin.x - roleSize.x) / 2, rectMin.y + (rectMax.y - rectMin.y - roleSize.y) / 2 };
+                            child->DrawList->AddText(textPos, h->CO(colors::RoleMember), role.c_str());
+                            PopFont();
                         }
 
                         PopFont();

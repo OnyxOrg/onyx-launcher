@@ -124,6 +124,7 @@ struct Fonts
 	ImFont* RennerM;
 	ImFont* userRoleFont; // font used only for the user role text
 	ImFont* userUidFont; // independent font size for user UID text
+	ImFont* profileRoleFont; // independent font for profile page role text (Inter)
 	ImFont* discordSupportFont; // independent font size for dashboard Support label
 	bool RenderFonts();
 }; inline std::unique_ptr<Fonts> fonts = std::make_unique<Fonts>();

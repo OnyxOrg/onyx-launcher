@@ -103,6 +103,7 @@ bool Fonts::RenderFonts()
     RennerM = EFONT(_RennerM, 16, cfg);
     userRoleFont = EFONT(_RennerM, 14, cfg); // independent role font size
     userUidFont = EFONT(_InterM, 14, cfg); // independent UID font size
+    profileRoleFont = EFONT(_InterS, 15, cfg); // independent Inter font for profile role
     discordSupportFont = EFONT(_RennerM, 15, cfg); // independent Support font size
 
     return true;

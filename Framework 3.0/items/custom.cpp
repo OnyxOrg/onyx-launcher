@@ -36,11 +36,11 @@ void Custom::Banner(const std::string& title, const std::string& message, ID3D11
 	window->DrawList->AddRectFilled(pos, pos + size, h->CO(layer), 15);
 
 	PushFont(fonts->InterS[1]);
-	window->DrawList->AddText(pos + vec2(15, 8), h->CO(colors::White), title.c_str());
+	window->DrawList->AddText(pos + vec2(15, 16), h->CO(colors::White), title.c_str());
 	PopFont();
 
 	PushFont(fonts->RennerM);
-	window->DrawList->AddText(pos + vec2(15, 40), h->CO(colors::Lwhite), message.c_str());
+	window->DrawList->AddText(pos + vec2(15, 48), h->CO(colors::Lwhite), message.c_str());
 	PopFont();
 }
 
