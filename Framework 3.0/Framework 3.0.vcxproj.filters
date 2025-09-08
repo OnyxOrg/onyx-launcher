@@ -293,6 +293,9 @@
     <ClInclude Include="core\functional\animations.h">
       <Filter>Header Files</Filter>
     </ClInclude>
+    <ClInclude Include="core\networking.hpp">
+      <Filter>Header Files</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <Library Include="modules\freetype\win64\freetype.lib" />

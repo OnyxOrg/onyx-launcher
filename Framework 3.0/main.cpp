@@ -117,7 +117,9 @@ INT __stdcall WinMain(HINSTANCE, HINSTANCE, LPSTR, int)
 
                     std::string buttonLabel = (alpha->tab == login) ? "SIGN IN" : "SIGN UP";
                     SetCursorPosX((window->Size.x - 220) / 2);
-                    if (items->Button(buttonLabel, { window->Size.x - GetCursorPosX() * 2, 40 }))
+                    bool _clickedSubmit = items->Button(buttonLabel, { window->Size.x - GetCursorPosX() * 2, 40 });
+                    bool _enterPressed = IsKeyPressed(ImGuiKey_Enter) || IsKeyPressed(ImGuiKey_KeypadEnter);
+                    if (_clickedSubmit || _enterPressed)
                     {
                         if (alpha->tab == login)
                         {

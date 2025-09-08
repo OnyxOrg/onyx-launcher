@@ -93,6 +93,7 @@
       <SDLCheck>true</SDLCheck>
       <PreprocessorDefinitions>WIN32;NDEBUG;_CONSOLE;%(PreprocessorDefinitions)</PreprocessorDefinitions>
       <ConformanceMode>true</ConformanceMode>
+      <LanguageStandard>stdcpp20</LanguageStandard>
     </ClCompile>
     <Link>
       <SubSystem>Console</SubSystem>
@@ -158,6 +159,7 @@
     <ClInclude Include="core\data\images.h" />
     <ClInclude Include="core\functional\animations.h" />
     <ClInclude Include="core\main.hpp" />
+    <ClInclude Include="core\networking.hpp" />
     <ClInclude Include="items\custom.hpp" />
     <ClInclude Include="modules\freetype\imgui_freetype.h" />
     <ClInclude Include="modules\freetype\include\freetype\config\ftconfig.h" />
