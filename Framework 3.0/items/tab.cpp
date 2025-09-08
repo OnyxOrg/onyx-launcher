@@ -23,15 +23,16 @@ bool Items::Tab(const std::string& label, const std::string& icon, bool cond)
 	using namespace tabcol;
 
 	vec2 pos = window->DC.CursorPos;
+	PushFont(fonts->RennerM);
 	vec2 labelSize = h->CT(label);
 
 	PushFont(fonts->Icons[2]);
 	vec2 iconSize = h->CT(icon);
 	PopFont();
 
-	float gap = iconSize.x + 15;
+	float gap = iconSize.x + 12;
 
-	vec2 size = vec2(130, 35);
+	vec2 size = vec2(140, 36);
 
 	bool r = InvisibleButton(label.c_str(), size);
 	bool act = cond; bool hov = IsItemHovered();
@@ -52,10 +53,11 @@ bool Items::Tab(const std::string& label, const std::string& icon, bool cond)
 	window->DrawList->AddRectFilled(pos, pos + size, h->CO(it.bg), rounding);
 
 	PushFont(fonts->Icons[2]),
-	window->DrawList->AddText(pos + vec2(5, (size.y - labelSize.y) / 2), h->CO(it.col), icon.c_str());
+	window->DrawList->AddText(pos + vec2(5, (size.y - iconSize.y) / 2 - 1), h->CO(it.col), icon.c_str());
 	PopFont();
 
 	window->DrawList->AddText(pos + vec2(gap, (size.y - labelSize.y) / 2), h->CO(it.col), label.c_str());
+	PopFont();
 
 	return r;
 }

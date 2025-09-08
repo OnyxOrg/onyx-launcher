@@ -119,6 +119,7 @@ struct Fonts
 
 	ImFont* Pass;
 	ImFont* Xirod;
+	ImFont* RennerM;
 	bool RenderFonts();
 }; inline std::unique_ptr<Fonts> fonts = std::make_unique<Fonts>();
 

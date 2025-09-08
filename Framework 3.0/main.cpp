@@ -212,7 +212,7 @@ INT __stdcall WinMain(HINSTANCE, HINSTANCE, LPSTR, int)
                 PopFont();
 
                 PushStyleVarY(ImGuiStyleVar_ItemSpacing, 10);
-                PushFont(fonts->InterM[3]);
+                PushFont(fonts->RennerM);
 
                 SetCursorPos({ 15, 100 });
                 if (items->Tab("Dashboard", HOME, subalpha->index == dashboard)) subalpha->index = dashboard;
@@ -220,15 +220,16 @@ INT __stdcall WinMain(HINSTANCE, HINSTANCE, LPSTR, int)
                 SetCursorPosX(15);
                 if (items->Tab("Library", BOOKMARK, subalpha->index == library)) subalpha->index = library;
 
-                PushFont(fonts->InterM[1]);
+                PushFont(fonts->RennerM);
                 SetCursorPos({ 15, window->Size.y - 58 });
                 if (items->Profile("reliquew", "Owner", images->profilePic)) subalpha->index = profile;
                 PopFont();
 
-                SetCursorPos({ 22, window->Size.y -98 });
+                SetCursorPos({ 22, window->Size.y -100 });
                 Image((ImTextureID)images->discordIcon, { 20, 15 });
 
                 SetCursorPos({ 22, window->Size.y - 100 });
+                PushFont(fonts->RennerM);
                 if (items->TextButton("       Support", "dc_sp", colors::Lwhite))
                 {
                     std::thread([&] {
