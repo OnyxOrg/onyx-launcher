@@ -1,8 +1,10 @@
 ﻿#include ".\items\custom.hpp"
 #include <thread>
 
-char usrbuf[42]
-    ,pasbuf[42]
+char loginUsr[42]
+    ,loginPas[42]
+    ,registerUsr[42]
+    ,registerPas[42]
     ,licbuf[42]; // + 1 byte for null character
 
 bool remember;
@@ -84,11 +86,22 @@ INT __stdcall WinMain(HINSTANCE, HINSTANCE, LPSTR, int)
                 {
                     PushFont(fonts->InterM[1]);
 
-                    SetCursorPos({ (window->Size.x - 220) / 2, 135 });
-                    items->Input("Username", USER, "", usrbuf, _size(usrbuf), 0);
+                    if (alpha->tab == login)
+                    {
+                        SetCursorPos({ (window->Size.x - 220) / 2, 135 });
+                        items->Input("Username", USER, "", loginUsr, _size(loginUsr), 0);
 
-                    SetCursorPosX((window->Size.x - 220) / 2);
-                    items->Input("Password", EYE_SLASHED, EYE, pasbuf, _size(pasbuf), ImGuiInputTextFlags_Password /*THIS FLAG WILL MAKE THE ICON TO CHANGE, MAKE SURE TO SET 2 ICONS*/);
+                        SetCursorPosX((window->Size.x - 220) / 2);
+                        items->Input("Password", EYE_SLASHED, EYE, loginPas, _size(loginPas), ImGuiInputTextFlags_Password /*THIS FLAG WILL MAKE THE ICON TO CHANGE, MAKE SURE TO SET 2 ICONS*/);
+                    }
+                    else
+                    {
+                        SetCursorPos({ (window->Size.x - 220) / 2, 135 });
+                        items->Input("Username", USER, "", registerUsr, _size(registerUsr), 0);
+
+                        SetCursorPosX((window->Size.x - 220) / 2);
+                        items->Input("Password", EYE_SLASHED, EYE, registerPas, _size(registerPas), ImGuiInputTextFlags_Password /*THIS FLAG WILL MAKE THE ICON TO CHANGE, MAKE SURE TO SET 2 ICONS*/);
+                    }
 
                     if (alpha->tab == login)
                     {
@@ -106,8 +119,16 @@ INT __stdcall WinMain(HINSTANCE, HINSTANCE, LPSTR, int)
                     SetCursorPosX((window->Size.x - 220) / 2);
                     if (items->Button(buttonLabel, { window->Size.x - GetCursorPosX() * 2, 40 }))
                     {
-                        alpha->index = home;
-                        subalpha->index = dashboard; // make sure to change this aswell
+                        if (alpha->tab == login)
+                        {
+                            alpha->index = home;
+                            subalpha->index = dashboard; // make sure to change this aswell
+                        }
+                        else
+                        {
+                            // After successful sign up, redirect to Sign in page
+                            alpha->index = login;
+                        }
                     }
 
                     PopFont();
@@ -123,6 +144,13 @@ INT __stdcall WinMain(HINSTANCE, HINSTANCE, LPSTR, int)
                     SameLine();
                     if (items->TextButton(redirectLabel, redirectLabel, colors::Main))
                     {
+                        // Clear all auth-related buffers when switching forms
+                        ZeroMemory(loginUsr, sizeof(loginUsr));
+                        ZeroMemory(loginPas, sizeof(loginPas));
+                        ZeroMemory(registerUsr, sizeof(registerUsr));
+                        ZeroMemory(registerPas, sizeof(registerPas));
+                        ZeroMemory(licbuf, sizeof(licbuf));
+
                         if (alpha->index == login)
                             alpha->index = registerr;
                         else
