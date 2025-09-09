@@ -12,7 +12,7 @@ bool remember;
 INT __stdcall WinMain(HINSTANCE, HINSTANCE, LPSTR, int)
 {
     // Single-instance guard: prevent multiple instances
-    const wchar_t* kSingleInstanceMutexName = L"Global\\OnyxFramework3_SingleInstance";
+    const wchar_t* kSingleInstanceMutexName = L"Global\\OnyxLauncher_SingleInstance";
     HANDLE singleInstanceMutex = CreateMutexW(nullptr, FALSE, kSingleInstanceMutexName);
     if (singleInstanceMutex == nullptr)
         return 0;
