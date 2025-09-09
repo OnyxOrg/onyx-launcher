@@ -93,13 +93,13 @@ INT __stdcall WinMain(HINSTANCE, HINSTANCE, LPSTR, int)
 
             PushFont(fonts->Icons[0]);
 
-            SetCursorPos({ window->Size.x - h->CT(CLOSE).x - 10, 5 });
+            SetCursorPos({ window->Size.x - h->CT(CLOSE).x - 10, 8 });
             if (items->TextButton(CLOSE, "close_wnd"))
                 exit(0);
 
             SameLine();
 
-            SetCursorPosX(window->Size.x - h->CT(MINUS).x - 10 * 3);
+            SetCursorPos({ window->Size.x - h->CT(MINUS).x - 10 * 3, 7 });
             if (items->TextButton(MINUS, "minmize_wnd"))
                 ShowWindow(*(hRef), SW_MINIMIZE);
 
