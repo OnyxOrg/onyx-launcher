@@ -126,6 +126,9 @@ struct Fonts
 	ImFont* userUidFont; // independent font size for user UID text
 	ImFont* profileRoleFont; // independent font for profile page role text (Inter)
 	ImFont* discordSupportFont; // independent font size for dashboard Support label
+	ImFont* announcementStatusFont; // independent font used for announcement status badge
+	ImFont* announcementStatusFontBold; // bold font used for announcement status label
+	ImFont* announcementDescriptionFont; // independent font used for announcement description
 	bool RenderFonts();
 }; inline std::unique_ptr<Fonts> fonts = std::make_unique<Fonts>();
 

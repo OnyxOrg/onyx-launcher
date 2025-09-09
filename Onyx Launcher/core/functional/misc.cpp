@@ -105,6 +105,14 @@ bool Fonts::RenderFonts()
     userUidFont = EFONT(_InterM, 14, cfg); // independent UID font size
     profileRoleFont = EFONT(_InterS, 15, cfg); // independent Inter font for profile role
     discordSupportFont = EFONT(_RennerM, 15, cfg); // independent Support font size
+    announcementStatusFont = EFONT(_InterM, 14, cfg); // independent font for announcement status
+    // Bold variant specifically for label text
+    {
+        ImFontConfig boldCfg = cfg;
+        boldCfg.FontBuilderFlags |= ImGuiFreeTypeBuilderFlags_Bold;
+        announcementStatusFontBold = EFONT(_InterM, 14, boldCfg);
+    }
+    announcementDescriptionFont = EFONT(_InterM, 17, cfg); // independent font for announcement description
 
     return true;
 }
