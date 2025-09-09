@@ -3,8 +3,6 @@
 
 namespace productcol
 {
-	vec4 expireColor = colors::Main;
-
 	vec4 fadeC = vec4(0, 0, 0, 0.9);
 	vec4 fadeHov = vec4(0, 0, 0, 0.4);
 
@@ -20,7 +18,7 @@ struct Products
 	float time;
 };
 
-bool Items::Product(const std::string& label, const std::string& expirationDate, ProductStatus status, ID3D11ShaderResourceView* tex)
+bool Items::Product(const std::string& label, const std::string& expirationText, ProductStatus status, ID3D11ShaderResourceView* tex, const vec4& expirationColor)
 {
 	const auto& window = GetCurrentWindow();
 	using namespace productcol;
@@ -59,10 +57,8 @@ bool Items::Product(const std::string& label, const std::string& expirationDate,
 	PopFont();
 
 	PushFont(fonts->InterM[1]);
-	window->DrawList->AddText(pos + vec2(6, size.y - h->CT("Expires: ").y - 27), h->CO(colors::Lwhite), "Expires: ");
-	window->DrawList->AddText(pos + vec2(6 + h->CT("Expires: ").x, size.y - h->CT("Expires: ").y - 27), h->CO(expireColor), expirationDate.c_str());
-
-	window->DrawList->AddText(pos + vec2(6, size.y - h->CT("Status: ").y - 10), h->CO(colors::Lwhite), "Status: ");
+	// Status first (higher row)
+	window->DrawList->AddText(pos + vec2(6, size.y - h->CT("Status: ").y - 27), h->CO(colors::Lwhite), "Status: ");
 
 	vec4 renderStatusCol = statusCol;
 	if (status == ProductStatus::Updating)
@@ -70,7 +66,11 @@ bool Items::Product(const std::string& label, const std::string& expirationDate,
 		float t = (sinf((float)ImGui::GetTime() * 6.2831853f) * 0.5f + 0.5f); // smooth pulse
 		renderStatusCol.w = ImLerp(0.35f, 1.0f, t);
 	}
-	window->DrawList->AddText(pos + vec2(6 + h->CT("Status: ").x, size.y - h->CT("Status: ").y - 10), h->CO(renderStatusCol), statusProd.c_str());
+	window->DrawList->AddText(pos + vec2(6 + h->CT("Status: ").x, size.y - h->CT("Status: ").y - 27), h->CO(renderStatusCol), statusProd.c_str());
+
+	// Then time left / expiry
+	window->DrawList->AddText(pos + vec2(6, size.y - h->CT("Time left: ").y - 10), h->CO(colors::Lwhite), "Time left: ");
+	window->DrawList->AddText(pos + vec2(6 + h->CT("Time left: ").x, size.y - h->CT("Time left: ").y - 10), h->CO(expirationColor), expirationText.c_str());
 	PopFont();
 
 	if (hov)
@@ -82,7 +82,7 @@ bool Items::Product(const std::string& label, const std::string& expirationDate,
 	window->DrawList->AddRectFilled(pos + size - sqSize - vec2(padding, padding), pos + size - vec2(padding, padding ), h->CO(colors::ItemBg), 7);
 
 	PushFont(fonts->Icons[3]);
-	window->DrawList->AddText((pos + size - sqSize - vec2(padding, padding) + pos + size - vec2(padding, padding)) * 0.5f - h->CT(PLAY) * 0.5f, h->CO(it.icon), PLAY);	
+	window->DrawList->AddText((pos + size - sqSize - vec2(padding, padding) + pos + size - vec2(padding, padding)) * 0.5f - h->CT(PLAY) * 0.5f, h->CO(it.icon), PLAY);
 	PopFont();
 
 	return r;

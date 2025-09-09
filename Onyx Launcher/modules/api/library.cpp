@@ -23,7 +23,7 @@ namespace Api
 			cli.set_read_timeout(5, 0);
 			cli.set_write_timeout(5, 0);
 
-			// Bot API: /api/webapp/library/:username -> [{ name, duration }]
+			// Bot API: /api/webapp/library/:username -> [{ name, duration, expiresAt }]
 			std::string path = "/api/webapp/library/" + username;
 			auto res = cli.Get(path.c_str());
 			if (!res || res->status != 200)
@@ -38,7 +38,11 @@ namespace Api
 				LibraryProduct p;
 				p.name = it.value("name", std::string());
 				p.status = std::string("online");
-				p.expiresAt = it.value("duration", std::string());
+				p.durationLabel = it.value("duration", std::string());
+				if (it.contains("expiresAt") && !it["expiresAt"].is_null())
+					p.expiresAt = it["expiresAt"].get<std::string>();
+				else
+					p.expiresAt.clear();
 				result.push_back(std::move(p));
 			}
 		}

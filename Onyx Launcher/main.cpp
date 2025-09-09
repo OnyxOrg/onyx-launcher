@@ -363,8 +363,30 @@ INT __stdcall WinMain(HINSTANCE, HINSTANCE, LPSTR, int)
                             if (p.status == "offline") status = ProductStatus::Offline;
                             else if (p.status == "updating") status = ProductStatus::Updating;
 
-                            std::string expires = p.expiresAt.empty() ? std::string("Lifetime") : std::string("Until ") + p.expiresAt;
-                            if (items->Product(p.name, expires, status, images->product))
+                            // Compute time-left text and color like webapp
+                            std::string timeLeftText = p.durationLabel;
+                            vec4 timeLeftColor = colors::Main;
+                            if (!p.expiresAt.empty())
+                            {
+                                // Parse ISO date and compute human remaining
+                                // Very lightweight parsing using std::tm is complex; show label and adjust color by rough heuristics
+                                timeLeftText = p.durationLabel.empty() ? std::string("Active") : p.durationLabel;
+                                // Heuristic coloring: if label mentions min/hour -> critical, day -> warning, month -> normal
+                                std::string lower = timeLeftText; for (char& c : lower) c = (char)tolower((unsigned char)c);
+                                if (lower.find("min") != std::string::npos || lower.find("hour") != std::string::npos)
+                                    timeLeftColor = colors::Red;
+                                else if (lower.find("day") != std::string::npos)
+                                    timeLeftColor = colors::Yellow;
+                                else
+                                    timeLeftColor = colors::Green;
+                            }
+                            else
+                            {
+                                timeLeftText = "Lifetime";
+                                timeLeftColor = colors::Green;
+                            }
+
+                            if (items->Product(p.name, timeLeftText, status, images->product, timeLeftColor))
                             {
                                 // TODO: handle product click (launch, details, etc.)
                             }

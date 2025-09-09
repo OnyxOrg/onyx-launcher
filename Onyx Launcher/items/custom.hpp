@@ -93,7 +93,7 @@ struct Items
 	bool ImageButton(const std::string& label, ID3D11ShaderResourceView* image, vec2 imgSize);
 	bool Tab(const std::string& label, const std::string& icon, bool cond);
 	void Announcement(const std::string& title, const std::string& description, const std::string& date, AnnouncementStatus status);
-	bool Product(const std::string& label, const std::string& expirationDate, ProductStatus status, ID3D11ShaderResourceView* tex);
+	bool Product(const std::string& label, const std::string& expirationText, ProductStatus status, ID3D11ShaderResourceView* tex, const vec4& expirationColor);
 	bool Profile(const std::string& name, const std::string& role, ID3D11ShaderResourceView* tex);
 	bool ButtonIcon(const std::string& label, const std::string& icon, const vec2& size);
 	void SetInputError(const std::string& name, bool error);
