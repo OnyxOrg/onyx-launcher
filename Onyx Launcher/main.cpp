@@ -112,6 +112,14 @@ INT __stdcall WinMain(HINSTANCE, HINSTANCE, LPSTR, int)
 
                     if (alpha->tab == login)
                     {
+                        if (strlen(loginErrMsg) > 0)
+                        {
+                            SetCursorPos({ (window->Size.x - 220) / 2 + 5, 110 });
+                            PushFont(fonts->InterM[0]);
+                            draw->Text(loginErrMsg, colors::Red);
+                            PopFont();
+                        }
+
                         SetCursorPos({ (window->Size.x - 220) / 2, 135 });
                         items->Input("Username", USER, "", loginUsr, _size(loginUsr), 0);
 
@@ -184,12 +192,6 @@ INT __stdcall WinMain(HINSTANCE, HINSTANCE, LPSTR, int)
                     }
 
                     PopFont();
-
-                    if (alpha->tab == login && strlen(loginErrMsg) > 0)
-                    {
-                        SetCursorPosX((window->Size.x - 220) / 2);
-                        draw->Text(loginErrMsg, colors::Lwhite2);
-                    }
 
                     PushFont(fonts->InterM[0]);
 
