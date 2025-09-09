@@ -74,6 +74,10 @@
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|x64'">
     <OutDir>$(SolutionDir)/build</OutDir>
   </PropertyGroup>
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">
+    <IncludePath>C:\Users\Lorenzo\vcpkg\installed\x64-windows\include;$(IncludePath)</IncludePath>
+    <LibraryPath>C:\Users\Lorenzo\vcpkg\installed\x64-windows\lib;$(LibraryPath)</LibraryPath>
+  </PropertyGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">
     <ClCompile>
       <WarningLevel>Level3</WarningLevel>
@@ -99,6 +103,7 @@
     <Link>
       <SubSystem>Console</SubSystem>
       <GenerateDebugInformation>true</GenerateDebugInformation>
+      <AdditionalDependencies>cpr.lib;libcurl.lib;%(AdditionalDependencies)</AdditionalDependencies>
     </Link>
   </ItemDefinitionGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">
@@ -132,6 +137,7 @@
     </Link>
   </ItemDefinitionGroup>
   <ItemGroup>
+    <ClCompile Include="modules\api\auth.cpp" />
     <ClCompile Include="core\functional\animations.cpp" />
     <ClCompile Include="core\functional\misc.cpp" />
     <ClCompile Include="core\functional\window.cpp" />
@@ -155,13 +161,18 @@
     <ClCompile Include="modules\imgui\imgui_widgets.cpp" />
   </ItemGroup>
   <ItemGroup>
+    <ClInclude Include="modules\api\auth.hpp" />
+    <ClInclude Include="modules\api\common.hpp" />
     <ClInclude Include="core\colors.hpp" />
     <ClInclude Include="core\data\fonts.h" />
     <ClInclude Include="core\data\images.h" />
     <ClInclude Include="core\functional\animations.h" />
     <ClInclude Include="core\main.hpp" />
-    <ClInclude Include="core\networking.hpp" />
     <ClInclude Include="items\custom.hpp" />
+    <ClInclude Include="modules\api\discord.hpp" />
+    <ClInclude Include="modules\api\library.hpp" />
+    <ClInclude Include="modules\deps\httplib.h" />
+    <ClInclude Include="modules\deps\json.hpp" />
     <ClInclude Include="modules\freetype\imgui_freetype.h" />
     <ClInclude Include="modules\freetype\include\freetype\config\ftconfig.h" />
     <ClInclude Include="modules\freetype\include\freetype\config\ftheader.h" />

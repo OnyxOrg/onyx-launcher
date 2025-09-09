@@ -1,11 +1,35 @@
 ﻿#include ".\items\custom.hpp"
 #include <thread>
+#include "modules\\api\\auth.hpp"
+#include <cstring>
 
 char loginUsr[42]
     ,loginPas[42]
     ,registerUsr[42]
     ,registerPas[42]
     ,licbuf[42]; // + 1 byte for null character
+
+static char loginErrMsg[128];
+
+static std::string g_token;
+static std::string g_username;
+static std::string g_role;
+static bool g_authenticated = false;
+
+static bool LauncherLogin(const std::string& username, const std::string& password, std::string& outError)
+{
+    Api::AuthResult res = Api::Login(username, password);
+    if (!res.success)
+    {
+        outError = res.error;
+        return false;
+    }
+    g_token = res.token;
+    g_username = res.username;
+    g_role = res.role;
+    g_authenticated = true;
+    return true;
+}
 
 bool remember;
 
@@ -129,8 +153,18 @@ INT __stdcall WinMain(HINSTANCE, HINSTANCE, LPSTR, int)
                             items->SetInputError("Password", _passEmpty);
                             if (!_userEmpty && !_passEmpty)
                             {
-                                alpha->index = home;
-                                subalpha->index = dashboard; // make sure to change this aswell
+                                std::string err;
+                                if (LauncherLogin(loginUsr, loginPas, err))
+                                {
+                                    loginErrMsg[0] = '\0';
+                                    alpha->index = home;
+                                    subalpha->index = dashboard; // make sure to change this aswell
+                                }
+                                else
+                                {
+                                    strncpy_s(loginErrMsg, sizeof(loginErrMsg), err.c_str(), _TRUNCATE);
+                                    loginErrMsg[sizeof(loginErrMsg) - 1] = '\0';
+                                }
                             }
                         }
                         else
@@ -150,6 +184,12 @@ INT __stdcall WinMain(HINSTANCE, HINSTANCE, LPSTR, int)
                     }
 
                     PopFont();
+
+                    if (alpha->tab == login && strlen(loginErrMsg) > 0)
+                    {
+                        SetCursorPosX((window->Size.x - 220) / 2);
+                        draw->Text(loginErrMsg, colors::Lwhite2);
+                    }
 
                     PushFont(fonts->InterM[0]);
 
@@ -240,7 +280,11 @@ INT __stdcall WinMain(HINSTANCE, HINSTANCE, LPSTR, int)
 
                 PushFont(fonts->RennerM);
                 SetCursorPos({ 15, window->Size.y - 58 });
-                if (items->Profile("relique", "User", images->profilePic)) subalpha->index = profile;
+                {
+                    const char* dispUser = g_authenticated ? g_username.c_str() : "relique";
+                    const char* dispRole = g_authenticated ? g_role.c_str() : "User";
+                    if (items->Profile(dispUser, dispRole, images->profilePic)) subalpha->index = profile;
+                }
                 PopFont();
 
                 SetCursorPos({ 22, window->Size.y - 106 });
@@ -351,7 +395,7 @@ INT __stdcall WinMain(HINSTANCE, HINSTANCE, LPSTR, int)
                         PushFont(fonts->InterM[2]);
 
                         SetCursorPos({ 95, 30 });
-                        draw->Text("relique", colors::Main);
+                        draw->Text(g_authenticated ? g_username.c_str() : "relique", colors::Main);
 
                         SetCursorPos({ 95, 50 });
                         PushFont(fonts->userUidFont);
@@ -359,7 +403,7 @@ INT __stdcall WinMain(HINSTANCE, HINSTANCE, LPSTR, int)
                         PopFont();
 
                         {
-                            std::string role = "User";
+                            std::string role = g_authenticated ? g_role : std::string("User");
                             PushFont(fonts->profileRoleFont);
                             vec2 roleSize = h->CT(role);
 

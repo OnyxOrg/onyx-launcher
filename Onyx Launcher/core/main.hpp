@@ -15,8 +15,12 @@
 
 #pragma comment(lib, "D3DX11.lib")
 #pragma comment(lib, "Shell32.lib")
+#pragma comment(lib, "Ws2_32.lib")
 
 #include <iostream>
+#include <winsock2.h>
+#include <ws2def.h>
+#include <ws2tcpip.h>
 #include <windows.h>
 #include <shellapi.h>
 #include <d3d11.h>
@@ -178,4 +182,3 @@ private:
 	float time;
 	int last;
 };
-
