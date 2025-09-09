@@ -16,6 +16,16 @@ static std::string g_username;
 static std::string g_role;
 static bool g_authenticated = false;
 
+static std::string FormatRole(const std::string& role)
+{
+    if (role.empty()) return std::string("User");
+    std::string lower = role;
+    std::transform(lower.begin(), lower.end(), lower.begin(), [](unsigned char c){ return static_cast<char>(::tolower(c)); });
+    if (lower == "dev" || lower == "developer") return std::string("Developer");
+    lower[0] = static_cast<char>(::toupper(static_cast<unsigned char>(lower[0])));
+    return lower;
+}
+
 static bool LauncherLogin(const std::string& username, const std::string& password, std::string& outError)
 {
     Api::AuthResult res = Api::Login(username, password);
@@ -284,8 +294,8 @@ INT __stdcall WinMain(HINSTANCE, HINSTANCE, LPSTR, int)
                 SetCursorPos({ 15, window->Size.y - 58 });
                 {
                     const char* dispUser = g_authenticated ? g_username.c_str() : "relique";
-                    const char* dispRole = g_authenticated ? g_role.c_str() : "User";
-                    if (items->Profile(dispUser, dispRole, images->profilePic)) subalpha->index = profile;
+                    std::string roleDisplay = g_authenticated ? FormatRole(g_role) : std::string("User");
+                    if (items->Profile(dispUser, roleDisplay.c_str(), images->profilePic)) subalpha->index = profile;
                 }
                 PopFont();
 
@@ -405,7 +415,7 @@ INT __stdcall WinMain(HINSTANCE, HINSTANCE, LPSTR, int)
                         PopFont();
 
                         {
-                            std::string role = g_authenticated ? g_role : std::string("User");
+                            std::string role = g_authenticated ? FormatRole(g_role) : std::string("User");
                             PushFont(fonts->profileRoleFont);
                             vec2 roleSize = h->CT(role);
 
