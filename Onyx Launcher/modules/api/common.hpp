@@ -4,8 +4,18 @@
 
 namespace ApiConfig
 {
-	// Change this when deploying the API elsewhere
-	inline const char* BaseUrl = "http://localhost:3100";
+	// Primary API host (Discord bot API)
+	inline const char* DefaultPrimary = "http://localhost:3000";
+
+	inline std::string GetPrimaryBaseUrl()
+	{
+		return std::string(DefaultPrimary);
+	}
+
+	inline std::string GetFallbackBaseUrl()
+	{
+		return std::string();
+	}
 }
 
 

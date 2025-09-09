@@ -16,15 +16,12 @@ static std::string g_username;
 static std::string g_role;
 static bool g_authenticated = false;
 
-static std::string FormatRole(const std::string& role)
+static std::string FormatRole(const std::string&)
 {
-    if (role.empty()) return std::string("User");
-    std::string lower = role;
-    std::transform(lower.begin(), lower.end(), lower.begin(), [](unsigned char c){ return static_cast<char>(::tolower(c)); });
-    if (lower == "dev" || lower == "developer") return std::string("Developer");
-    lower[0] = static_cast<char>(::toupper(static_cast<unsigned char>(lower[0])));
-    return lower;
+    return std::string("User");
 }
+
+vec4 GetRoleColor(const std::string&) { return colors::RoleMember; }
 
 static bool LauncherLogin(const std::string& username, const std::string& password, std::string& outError)
 {
@@ -36,7 +33,7 @@ static bool LauncherLogin(const std::string& username, const std::string& passwo
     }
     g_token = res.token;
     g_username = res.username;
-    g_role = res.role;
+    g_role = "User";
     g_authenticated = true;
     return true;
 }

@@ -5,12 +5,11 @@
 
 namespace Api
 {
-	AuthResult Login(const std::string& username, const std::string& password)
+	static bool TryLogin(const std::string& baseUrl, const std::string& username, const std::string& password, AuthResult& out)
 	{
-		AuthResult result;
 		try
 		{
-			httplib::Client cli(ApiConfig::BaseUrl);
+			httplib::Client cli(baseUrl.c_str());
 			cli.set_read_timeout(5, 0);
 			cli.set_write_timeout(5, 0);
 
@@ -18,40 +17,51 @@ namespace Api
 			body["username"] = username;
 			body["password"] = password;
 
-			auto res = cli.Post("/api/launcher/login", body.dump(), "application/json");
+			// Always use Discord bot API login path
+			const char* path = "/api/webapp/login";
+			auto res = cli.Post(path, body.dump(), "application/json");
 			if (!res)
 			{
-				result.error = "Connection failed";
-				return result;
+				out.error = "Connection failed";
+				return false;
 			}
 			if (res->status != 200)
 			{
 				nlohmann::json errj = nlohmann::json::parse(res->body, nullptr, false);
 				if (!errj.is_discarded() && errj.contains("message") && errj["message"].is_string())
-					result.error = errj["message"].get<std::string>();
+					out.error = errj["message"].get<std::string>();
 				else
-					result.error = "Login failed";
-				return result;
+					out.error = "Login failed";
+				return false;
 			}
 
 			nlohmann::json j = nlohmann::json::parse(res->body, nullptr, false);
 			if (j.is_discarded())
 			{
-				result.error = "Bad response";
-				return result;
+				out.error = "Bad response";
+				return false;
 			}
 
-			result.token = j.value<std::string>("token", "");
-			result.username = j.value<std::string>("username", username);
-			result.role = j.value<std::string>("role", "User");
-			result.success = !result.token.empty();
-			if (!result.success)
-				result.error = "Invalid token";
+			out.token = j.value<std::string>("token", "");
+			out.username = j.value<std::string>("username", username);
+			out.role = j.value<std::string>("role", "User");
+			out.success = !out.token.empty();
+			if (!out.success)
+				out.error = "Invalid token";
+			return out.success;
 		}
 		catch (...)
 		{
-			result.error = "Unexpected error";
+			out.error = "Unexpected error";
+			return false;
 		}
+	}
+
+	AuthResult Login(const std::string& username, const std::string& password)
+	{
+		AuthResult result;
+		if (TryLogin(ApiConfig::GetPrimaryBaseUrl(), username, password, result))
+			return result;
 		return result;
 	}
 }
