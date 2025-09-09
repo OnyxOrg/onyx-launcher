@@ -57,8 +57,23 @@ namespace Api
 			if (j.is_discarded() || !j.is_array())
 				return result;
 
-			// Enrich with statuses from webapp if available
-			auto statusMap = TryFetchStatusesFromWebAppInternal(username);
+			// Prefer statuses from the bot API if provided; else try webapp; else default to online
+			std::map<std::string, std::string> statusMap;
+			try {
+				if (j.size() && j.begin()->is_object() && j.begin()->contains("status"))
+				{
+					for (const auto& itItem : j)
+					{
+						std::string name = MapStatusToString(itItem.value("name", std::string()));
+						std::string status = MapStatusToString(itItem.value("status", std::string("online")));
+						if (!name.empty()) statusMap[name] = status;
+					}
+				}
+				else
+				{
+					statusMap = TryFetchStatusesFromWebAppInternal(username);
+				}
+			} catch (...) {}
 
 			for (const auto& it : j)
 			{
