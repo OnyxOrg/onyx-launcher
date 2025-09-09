@@ -13,29 +13,7 @@ namespace Api
 		return out;
 	}
 
-	static std::map<std::string, std::string> TryFetchStatusesFromWebAppInternal(const std::string& username)
-	{
-		std::map<std::string, std::string> result;
-		try
-		{
-			httplib::Client cli(ApiConfig::GetWebAppBaseUrl().c_str());
-			cli.set_read_timeout(2, 0);
-			cli.set_write_timeout(2, 0);
-			std::string path = "/api/library/" + username;
-			auto res = cli.Get(path.c_str());
-			if (!res || res->status != 200) return result;
-			nlohmann::json j = nlohmann::json::parse(res->body, nullptr, false);
-			if (j.is_discarded() || !j.is_array()) return result;
-			for (const auto& it : j)
-			{
-				std::string name = MapStatusToString(it.value("name", std::string()));
-				std::string status = MapStatusToString(it.value("status", std::string("online")));
-				if (!name.empty()) result[name] = status;
-			}
-		}
-		catch (...) {}
-		return result;
-	}
+	
 
 	std::vector<LibraryProduct> GetUserLibrary(const std::string& username)
 	{
@@ -57,7 +35,7 @@ namespace Api
 			if (j.is_discarded() || !j.is_array())
 				return result;
 
-			// Prefer statuses from the bot API if provided; else try webapp; else default to online
+			// Prefer statuses from the bot API if provided; else default to online
 			std::map<std::string, std::string> statusMap;
 			try {
 				if (j.size() && j.begin()->is_object() && j.begin()->contains("status"))
@@ -69,10 +47,7 @@ namespace Api
 						if (!name.empty()) statusMap[name] = status;
 					}
 				}
-				else
-				{
-					statusMap = TryFetchStatusesFromWebAppInternal(username);
-				}
+				
 			} catch (...) {}
 
 			for (const auto& it : j)
