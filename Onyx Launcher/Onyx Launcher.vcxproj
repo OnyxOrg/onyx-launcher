@@ -138,6 +138,7 @@
   </ItemDefinitionGroup>
   <ItemGroup>
     <ClCompile Include="modules\api\auth.cpp" />
+    <ClCompile Include="modules\api\library.cpp" />
     <ClCompile Include="core\functional\animations.cpp" />
     <ClCompile Include="core\functional\misc.cpp" />
     <ClCompile Include="core\functional\window.cpp" />

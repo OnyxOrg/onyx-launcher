@@ -1,6 +1,7 @@
 ﻿#include ".\items\custom.hpp"
 #include <thread>
 #include "modules\\api\\auth.hpp"
+#include "modules\\api\\library.hpp"
 #include <cstring>
 
 char loginUsr[42]
@@ -15,6 +16,7 @@ static std::string g_token;
 static std::string g_username;
 static std::string g_role;
 static bool g_authenticated = false;
+static std::vector<Api::LibraryProduct> g_ownedProducts;
 
 static std::string FormatRole(const std::string&)
 {
@@ -35,6 +37,9 @@ static bool LauncherLogin(const std::string& username, const std::string& passwo
     g_username = res.username;
     g_role = "User";
     g_authenticated = true;
+
+    // Fetch owned products from webapp API
+    g_ownedProducts = Api::GetUserLibrary(g_username);
     return true;
 }
 
@@ -345,32 +350,44 @@ INT __stdcall WinMain(HINSTANCE, HINSTANCE, LPSTR, int)
 
                     PushStyleVar(ImGuiStyleVar_ItemSpacing, { 20, 20 });
 
-                    SetCursorPos({ 190, 70 });
-                    if (items->Product("Aura", "Never", ProductStatus::Online, images->product))
+                    // Render owned products from g_ownedProducts; show empty state otherwise
+                    int column = 0;
+                    float startX = 190.0f;
+                    SetCursorPos({ startX, 70 });
+                    if (!g_ownedProducts.empty())
                     {
+                        for (size_t i = 0; i < g_ownedProducts.size(); ++i)
+                        {
+                            const auto& p = g_ownedProducts[i];
+                            ProductStatus status = ProductStatus::Online;
+                            if (p.status == "offline") status = ProductStatus::Offline;
+                            else if (p.status == "updating") status = ProductStatus::Updating;
 
+                            std::string expires = p.expiresAt.empty() ? std::string("Lifetime") : std::string("Until ") + p.expiresAt;
+                            if (items->Product(p.name, expires, status, images->product))
+                            {
+                                // TODO: handle product click (launch, details, etc.)
+                            }
+
+                            // layout: 3 per row
+                            ++column;
+                            if (column % 3 != 0)
+                            {
+                                SameLine();
+                            }
+                            else
+                            {
+                                SetCursorPosX(startX);
+                            }
+                        }
                     }
-
-                    SameLine();
-                    if (items->Product("Supernova", "3 Days", ProductStatus::Updating, images->product))
+                    else
                     {
-
+                        PushFont(fonts->InterM[2]);
+                        SetCursorPos({ startX, 80 });
+                        draw->Text("No products in your library yet.", colors::Lwhite2);
+                        PopFont();
                     }
-
-                    SameLine();
-                    if (items->Product("Another one", "1 Day", ProductStatus::Offline, images->product))
-                    {
-
-                    }
-
-                    // if you want to add more simply adjust x-pos (SetCursorPosX)
-                    /*
-                    * SetCursorPosX(190);
-                    * if (items->product)...
-                    * 
-                    * SameLine();
-                    * if (items->product)...
-                    */
 
                     PopStyleVar(); // itemspacing
 
