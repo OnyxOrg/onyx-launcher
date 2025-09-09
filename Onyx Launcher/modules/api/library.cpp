@@ -13,6 +13,30 @@ namespace Api
 		return out;
 	}
 
+	static std::map<std::string, std::string> TryFetchStatusesFromWebAppInternal(const std::string& username)
+	{
+		std::map<std::string, std::string> result;
+		try
+		{
+			httplib::Client cli(ApiConfig::GetWebAppBaseUrl().c_str());
+			cli.set_read_timeout(2, 0);
+			cli.set_write_timeout(2, 0);
+			std::string path = "/api/library/" + username;
+			auto res = cli.Get(path.c_str());
+			if (!res || res->status != 200) return result;
+			nlohmann::json j = nlohmann::json::parse(res->body, nullptr, false);
+			if (j.is_discarded() || !j.is_array()) return result;
+			for (const auto& it : j)
+			{
+				std::string name = MapStatusToString(it.value("name", std::string()));
+				std::string status = MapStatusToString(it.value("status", std::string("online")));
+				if (!name.empty()) result[name] = status;
+			}
+		}
+		catch (...) {}
+		return result;
+	}
+
 	std::vector<LibraryProduct> GetUserLibrary(const std::string& username)
 	{
 		std::vector<LibraryProduct> result;
@@ -33,11 +57,18 @@ namespace Api
 			if (j.is_discarded() || !j.is_array())
 				return result;
 
+			// Enrich with statuses from webapp if available
+			auto statusMap = TryFetchStatusesFromWebAppInternal(username);
+
 			for (const auto& it : j)
 			{
 				LibraryProduct p;
 				p.name = it.value("name", std::string());
-				p.status = std::string("online");
+				{
+					std::string lower = MapStatusToString(p.name);
+					auto itst = statusMap.find(lower);
+					p.status = (itst != statusMap.end()) ? itst->second : std::string("online");
+				}
 				p.durationLabel = it.value("duration", std::string());
 				if (it.contains("expiresAt") && !it["expiresAt"].is_null())
 					p.expiresAt = it["expiresAt"].get<std::string>();
