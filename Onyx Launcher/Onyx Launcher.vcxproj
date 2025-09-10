@@ -84,6 +84,7 @@
       <SDLCheck>true</SDLCheck>
       <PreprocessorDefinitions>WIN32;_DEBUG;_CONSOLE;%(PreprocessorDefinitions)</PreprocessorDefinitions>
       <ConformanceMode>true</ConformanceMode>
+      <AdditionalIncludeDirectories>src;src/headers;src/deps;src/modules/freetype/include;C:\Program Files %28x86%29\Microsoft DirectX SDK %28June 2010%29\Include;src/modules/imgui;src/modules/freetype;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
     </ClCompile>
     <Link>
       <SubSystem>Console</SubSystem>
@@ -99,6 +100,7 @@
       <PreprocessorDefinitions>WIN32;NDEBUG;_CONSOLE;%(PreprocessorDefinitions)</PreprocessorDefinitions>
       <ConformanceMode>true</ConformanceMode>
       <LanguageStandard>stdcpp20</LanguageStandard>
+      <AdditionalIncludeDirectories>src;src/headers;src/deps;src/modules/freetype/include;C:\Program Files %28x86%29\Microsoft DirectX SDK %28June 2010%29\Include;src/modules/imgui;src/modules/freetype;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
     </ClCompile>
     <Link>
       <SubSystem>Console</SubSystem>
@@ -112,6 +114,7 @@
       <SDLCheck>true</SDLCheck>
       <PreprocessorDefinitions>_DEBUG;_CONSOLE;%(PreprocessorDefinitions)</PreprocessorDefinitions>
       <ConformanceMode>true</ConformanceMode>
+      <AdditionalIncludeDirectories>src;src/headers;src/deps;src/modules/freetype/include;C:\Program Files %28x86%29\Microsoft DirectX SDK %28June 2010%29\Include;src/modules/imgui;src/modules/freetype;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
     </ClCompile>
     <Link>
       <SubSystem>Console</SubSystem>
@@ -127,7 +130,7 @@
       <PreprocessorDefinitions>NDEBUG;_CONSOLE;%(PreprocessorDefinitions)</PreprocessorDefinitions>
       <ConformanceMode>true</ConformanceMode>
       <LanguageStandard>stdcpp20</LanguageStandard>
-      <AdditionalIncludeDirectories>modules/freetype/include;C:\Program Files %28x86%29\Microsoft DirectX SDK %28June 2010%29\Include;modules/imgui;modules/freetype;core;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>src;src/headers;src/deps;src/modules/freetype/include;C:\Program Files %28x86%29\Microsoft DirectX SDK %28June 2010%29\Include;src/modules/imgui;src/modules/freetype;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
     </ClCompile>
     <Link>
       <SubSystem>Windows</SubSystem>
@@ -137,111 +140,111 @@
     </Link>
   </ItemDefinitionGroup>
   <ItemGroup>
-    <ClCompile Include="modules\api\auth.cpp" />
-    <ClCompile Include="modules\api\library.cpp" />
-    <ClCompile Include="core\functional\animations.cpp" />
-    <ClCompile Include="core\functional\misc.cpp" />
-    <ClCompile Include="core\functional\window.cpp" />
-    <ClCompile Include="items\announcement.cpp" />
-    <ClCompile Include="items\button.cpp" />
-    <ClCompile Include="items\checkbox.cpp" />
-    <ClCompile Include="items\custom.cpp" />
-    <ClCompile Include="items\input.cpp" />
-    <ClCompile Include="items\product.cpp" />
-    <ClCompile Include="items\profile.cpp" />
-    <ClCompile Include="items\tab.cpp" />
-    <ClCompile Include="main.cpp" />
-    <ClCompile Include="modules\freetype\imgui_freetype.cpp" />
-    <ClCompile Include="modules\freetype\include\imgui_freetype.cpp" />
-    <ClCompile Include="modules\imgui\imgui.cpp" />
-    <ClCompile Include="modules\imgui\imgui_demo.cpp" />
-    <ClCompile Include="modules\imgui\imgui_draw.cpp" />
-    <ClCompile Include="modules\imgui\imgui_impl_dx11.cpp" />
-    <ClCompile Include="modules\imgui\imgui_impl_win32.cpp" />
-    <ClCompile Include="modules\imgui\imgui_tables.cpp" />
-    <ClCompile Include="modules\imgui\imgui_widgets.cpp" />
+    <ClCompile Include="src\api\auth.cpp" />
+    <ClCompile Include="src\api\library.cpp" />
+    <ClCompile Include="src\core\functional\animations.cpp" />
+    <ClCompile Include="src\core\functional\misc.cpp" />
+    <ClCompile Include="src\core\functional\window.cpp" />
+    <ClCompile Include="src\items\announcement.cpp" />
+    <ClCompile Include="src\items\button.cpp" />
+    <ClCompile Include="src\items\checkbox.cpp" />
+    <ClCompile Include="src\items\custom.cpp" />
+    <ClCompile Include="src\items\input.cpp" />
+    <ClCompile Include="src\items\product.cpp" />
+    <ClCompile Include="src\items\profile.cpp" />
+    <ClCompile Include="src\items\tab.cpp" />
+    <ClCompile Include="src\main.cpp" />
+    <ClCompile Include="src\modules\freetype\imgui_freetype.cpp" />
+    <ClCompile Include="src\modules\freetype\include\imgui_freetype.cpp" />
+    <ClCompile Include="src\modules\imgui\imgui.cpp" />
+    <ClCompile Include="src\modules\imgui\imgui_demo.cpp" />
+    <ClCompile Include="src\modules\imgui\imgui_draw.cpp" />
+    <ClCompile Include="src\modules\imgui\imgui_impl_dx11.cpp" />
+    <ClCompile Include="src\modules\imgui\imgui_impl_win32.cpp" />
+    <ClCompile Include="src\modules\imgui\imgui_tables.cpp" />
+    <ClCompile Include="src\modules\imgui\imgui_widgets.cpp" />
   </ItemGroup>
   <ItemGroup>
-    <ClInclude Include="modules\api\auth.hpp" />
-    <ClInclude Include="modules\api\common.hpp" />
-    <ClInclude Include="core\colors.hpp" />
-    <ClInclude Include="core\data\fonts.h" />
-    <ClInclude Include="core\data\images.h" />
-    <ClInclude Include="core\functional\animations.h" />
-    <ClInclude Include="core\main.hpp" />
-    <ClInclude Include="items\custom.hpp" />
-    <ClInclude Include="modules\api\discord.hpp" />
-    <ClInclude Include="modules\api\library.hpp" />
-    <ClInclude Include="modules\deps\httplib.h" />
-    <ClInclude Include="modules\deps\json.hpp" />
-    <ClInclude Include="modules\freetype\imgui_freetype.h" />
-    <ClInclude Include="modules\freetype\include\freetype\config\ftconfig.h" />
-    <ClInclude Include="modules\freetype\include\freetype\config\ftheader.h" />
-    <ClInclude Include="modules\freetype\include\freetype\config\ftmodule.h" />
-    <ClInclude Include="modules\freetype\include\freetype\config\ftoption.h" />
-    <ClInclude Include="modules\freetype\include\freetype\config\ftstdlib.h" />
-    <ClInclude Include="modules\freetype\include\freetype\config\integer-types.h" />
-    <ClInclude Include="modules\freetype\include\freetype\config\mac-support.h" />
-    <ClInclude Include="modules\freetype\include\freetype\config\public-macros.h" />
-    <ClInclude Include="modules\freetype\include\freetype\freetype.h" />
-    <ClInclude Include="modules\freetype\include\freetype\ftadvanc.h" />
-    <ClInclude Include="modules\freetype\include\freetype\ftbbox.h" />
-    <ClInclude Include="modules\freetype\include\freetype\ftbdf.h" />
-    <ClInclude Include="modules\freetype\include\freetype\ftbitmap.h" />
-    <ClInclude Include="modules\freetype\include\freetype\ftbzip2.h" />
-    <ClInclude Include="modules\freetype\include\freetype\ftcache.h" />
-    <ClInclude Include="modules\freetype\include\freetype\ftchapters.h" />
-    <ClInclude Include="modules\freetype\include\freetype\ftcid.h" />
-    <ClInclude Include="modules\freetype\include\freetype\ftcolor.h" />
-    <ClInclude Include="modules\freetype\include\freetype\ftdriver.h" />
-    <ClInclude Include="modules\freetype\include\freetype\fterrdef.h" />
-    <ClInclude Include="modules\freetype\include\freetype\fterrors.h" />
-    <ClInclude Include="modules\freetype\include\freetype\ftfntfmt.h" />
-    <ClInclude Include="modules\freetype\include\freetype\ftgasp.h" />
-    <ClInclude Include="modules\freetype\include\freetype\ftglyph.h" />
-    <ClInclude Include="modules\freetype\include\freetype\ftgxval.h" />
-    <ClInclude Include="modules\freetype\include\freetype\ftgzip.h" />
-    <ClInclude Include="modules\freetype\include\freetype\ftimage.h" />
-    <ClInclude Include="modules\freetype\include\freetype\ftincrem.h" />
-    <ClInclude Include="modules\freetype\include\freetype\ftlcdfil.h" />
-    <ClInclude Include="modules\freetype\include\freetype\ftlist.h" />
-    <ClInclude Include="modules\freetype\include\freetype\ftlogging.h" />
-    <ClInclude Include="modules\freetype\include\freetype\ftlzw.h" />
-    <ClInclude Include="modules\freetype\include\freetype\ftmac.h" />
-    <ClInclude Include="modules\freetype\include\freetype\ftmm.h" />
-    <ClInclude Include="modules\freetype\include\freetype\ftmodapi.h" />
-    <ClInclude Include="modules\freetype\include\freetype\ftmoderr.h" />
-    <ClInclude Include="modules\freetype\include\freetype\ftotval.h" />
-    <ClInclude Include="modules\freetype\include\freetype\ftoutln.h" />
-    <ClInclude Include="modules\freetype\include\freetype\ftparams.h" />
-    <ClInclude Include="modules\freetype\include\freetype\ftpfr.h" />
-    <ClInclude Include="modules\freetype\include\freetype\ftrender.h" />
-    <ClInclude Include="modules\freetype\include\freetype\ftsizes.h" />
-    <ClInclude Include="modules\freetype\include\freetype\ftsnames.h" />
-    <ClInclude Include="modules\freetype\include\freetype\ftstroke.h" />
-    <ClInclude Include="modules\freetype\include\freetype\ftsynth.h" />
-    <ClInclude Include="modules\freetype\include\freetype\ftsystem.h" />
-    <ClInclude Include="modules\freetype\include\freetype\fttrigon.h" />
-    <ClInclude Include="modules\freetype\include\freetype\fttypes.h" />
-    <ClInclude Include="modules\freetype\include\freetype\ftwinfnt.h" />
-    <ClInclude Include="modules\freetype\include\freetype\otsvg.h" />
-    <ClInclude Include="modules\freetype\include\freetype\t1tables.h" />
-    <ClInclude Include="modules\freetype\include\freetype\ttnameid.h" />
-    <ClInclude Include="modules\freetype\include\freetype\tttables.h" />
-    <ClInclude Include="modules\freetype\include\freetype\tttags.h" />
-    <ClInclude Include="modules\freetype\include\ft2build.h" />
-    <ClInclude Include="modules\freetype\include\imgui_freetype.h" />
-    <ClInclude Include="modules\imgui\imconfig.h" />
-    <ClInclude Include="modules\imgui\imgui.h" />
-    <ClInclude Include="modules\imgui\imgui_impl_dx11.h" />
-    <ClInclude Include="modules\imgui\imgui_impl_win32.h" />
-    <ClInclude Include="modules\imgui\imgui_internal.h" />
-    <ClInclude Include="modules\imgui\imstb_rectpack.h" />
-    <ClInclude Include="modules\imgui\imstb_textedit.h" />
-    <ClInclude Include="modules\imgui\imstb_truetype.h" />
+    <ClInclude Include="src\includes\api\auth.hpp" />
+    <ClInclude Include="src\includes\api\common.hpp" />
+    <ClInclude Include="src\includes\core\colors.hpp" />
+    <ClInclude Include="src\data\fonts.h" />
+    <ClInclude Include="src\data\images.h" />
+    <ClInclude Include="src\includes\core\animations.h" />
+    <ClInclude Include="src\includes\core\main.hpp" />
+    <ClInclude Include="src\includes\items\custom.hpp" />
+    <ClInclude Include="src\headers\api\discord.hpp" />
+    <ClInclude Include="src\includes\api\library.hpp" />
+    <ClInclude Include="src\deps\httplib.h" />
+    <ClInclude Include="src\deps\json.hpp" />
+    <ClInclude Include="src\modules\freetype\imgui_freetype.h" />
+    <ClInclude Include="src\modules\freetype\include\freetype\config\ftconfig.h" />
+    <ClInclude Include="src\modules\freetype\include\freetype\config\ftheader.h" />
+    <ClInclude Include="src\modules\freetype\include\freetype\config\ftmodule.h" />
+    <ClInclude Include="src\modules\freetype\include\freetype\config\ftoption.h" />
+    <ClInclude Include="src\modules\freetype\include\freetype\config\ftstdlib.h" />
+    <ClInclude Include="src\modules\freetype\include\freetype\config\integer-types.h" />
+    <ClInclude Include="src\modules\freetype\include\freetype\config\mac-support.h" />
+    <ClInclude Include="src\modules\freetype\include\freetype\config\public-macros.h" />
+    <ClInclude Include="src\modules\freetype\include\freetype\freetype.h" />
+    <ClInclude Include="src\modules\freetype\include\freetype\ftadvanc.h" />
+    <ClInclude Include="src\modules\freetype\include\freetype\ftbbox.h" />
+    <ClInclude Include="src\modules\freetype\include\freetype\ftbdf.h" />
+    <ClInclude Include="src\modules\freetype\include\freetype\ftbitmap.h" />
+    <ClInclude Include="src\modules\freetype\include\freetype\ftbzip2.h" />
+    <ClInclude Include="src\modules\freetype\include\freetype\ftcache.h" />
+    <ClInclude Include="src\modules\freetype\include\freetype\ftchapters.h" />
+    <ClInclude Include="src\modules\freetype\include\freetype\ftcid.h" />
+    <ClInclude Include="src\modules\freetype\include\freetype\ftcolor.h" />
+    <ClInclude Include="src\modules\freetype\include\freetype\ftdriver.h" />
+    <ClInclude Include="src\modules\freetype\include\freetype\fterrdef.h" />
+    <ClInclude Include="src\modules\freetype\include\freetype\fterrors.h" />
+    <ClInclude Include="src\modules\freetype\include\freetype\ftfntfmt.h" />
+    <ClInclude Include="src\modules\freetype\include\freetype\ftgasp.h" />
+    <ClInclude Include="src\modules\freetype\include\freetype\ftglyph.h" />
+    <ClInclude Include="src\modules\freetype\include\freetype\ftgxval.h" />
+    <ClInclude Include="src\modules\freetype\include\freetype\ftgzip.h" />
+    <ClInclude Include="src\modules\freetype\include\freetype\ftimage.h" />
+    <ClInclude Include="src\modules\freetype\include\freetype\ftincrem.h" />
+    <ClInclude Include="src\modules\freetype\include\freetype\ftlcdfil.h" />
+    <ClInclude Include="src\modules\freetype\include\freetype\ftlist.h" />
+    <ClInclude Include="src\modules\freetype\include\freetype\ftlogging.h" />
+    <ClInclude Include="src\modules\freetype\include\freetype\ftlzw.h" />
+    <ClInclude Include="src\modules\freetype\include\freetype\ftmac.h" />
+    <ClInclude Include="src\modules\freetype\include\freetype\ftmm.h" />
+    <ClInclude Include="src\modules\freetype\include\freetype\ftmodapi.h" />
+    <ClInclude Include="src\modules\freetype\include\freetype\ftmoderr.h" />
+    <ClInclude Include="src\modules\freetype\include\freetype\ftotval.h" />
+    <ClInclude Include="src\modules\freetype\include\freetype\ftoutln.h" />
+    <ClInclude Include="src\modules\freetype\include\freetype\ftparams.h" />
+    <ClInclude Include="src\modules\freetype\include\freetype\ftpfr.h" />
+    <ClInclude Include="src\modules\freetype\include\freetype\ftrender.h" />
+    <ClInclude Include="src\modules\freetype\include\freetype\ftsizes.h" />
+    <ClInclude Include="src\modules\freetype\include\freetype\ftsnames.h" />
+    <ClInclude Include="src\modules\freetype\include\freetype\ftstroke.h" />
+    <ClInclude Include="src\modules\freetype\include\freetype\ftsynth.h" />
+    <ClInclude Include="src\modules\freetype\include\freetype\ftsystem.h" />
+    <ClInclude Include="src\modules\freetype\include\freetype\fttrigon.h" />
+    <ClInclude Include="src\modules\freetype\include\freetype\fttypes.h" />
+    <ClInclude Include="src\modules\freetype\include\freetype\ftwinfnt.h" />
+    <ClInclude Include="src\modules\freetype\include\freetype\otsvg.h" />
+    <ClInclude Include="src\modules\freetype\include\freetype\t1tables.h" />
+    <ClInclude Include="src\modules\freetype\include\freetype\ttnameid.h" />
+    <ClInclude Include="src\modules\freetype\include\freetype\tttables.h" />
+    <ClInclude Include="src\modules\freetype\include\freetype\tttags.h" />
+    <ClInclude Include="src\modules\freetype\include\ft2build.h" />
+    <ClInclude Include="src\modules\freetype\include\imgui_freetype.h" />
+    <ClInclude Include="src\modules\imgui\imconfig.h" />
+    <ClInclude Include="src\modules\imgui\imgui.h" />
+    <ClInclude Include="src\modules\imgui\imgui_impl_dx11.h" />
+    <ClInclude Include="src\modules\imgui\imgui_impl_win32.h" />
+    <ClInclude Include="src\modules\imgui\imgui_internal.h" />
+    <ClInclude Include="src\modules\imgui\imstb_rectpack.h" />
+    <ClInclude Include="src\modules\imgui\imstb_textedit.h" />
+    <ClInclude Include="src\modules\imgui\imstb_truetype.h" />
   </ItemGroup>
   <ItemGroup>
-    <Library Include="modules\freetype\win64\freetype.lib" />
+    <Library Include="src\modules\freetype\win64\freetype.lib" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">

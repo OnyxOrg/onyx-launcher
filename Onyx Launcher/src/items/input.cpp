@@ -1,4 +1,4 @@
-#include "custom.hpp"
+#include "../includes/items/custom.hpp"
 
 // Error state per input name
 static std::map<std::string, bool> g_inputError;

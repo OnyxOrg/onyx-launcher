@@ -1,11 +1,11 @@
-﻿#include ".\items\custom.hpp"
+﻿#include "includes\\items\\custom.hpp"
 #include <thread>
 #include <ctime>
 #include <chrono>
 #include <cstdio>
 #include <atomic>
-#include "modules\\api\\auth.hpp"
-#include "modules\\api\\library.hpp"
+#include "includes\\api\\auth.hpp"
+#include "includes\\api\\library.hpp"
 #include <cstring>
 
 char loginUsr[42]

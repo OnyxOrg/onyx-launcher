@@ -1,5 +1,5 @@
-#include "colors.hpp"
-#include "data/fonts.h"
+#include "../../includes/core/colors.hpp"
+#include "../../data/fonts.h"
 
 void Gui::SmoothResize(RECT rc)
 {

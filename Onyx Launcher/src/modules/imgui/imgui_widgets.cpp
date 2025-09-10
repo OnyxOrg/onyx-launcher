@@ -40,7 +40,7 @@ Index of this file:
 #endif
 
 #include "imgui.h"
-#include "..\..\core\main.hpp"
+#include "../includes/core/main.hpp"
 #ifndef IMGUI_DISABLE
 #include "imgui_internal.h"
 

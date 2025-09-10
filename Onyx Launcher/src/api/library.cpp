@@ -1,7 +1,7 @@
-#include "library.hpp"
-#include "common.hpp"
-#include "../deps/httplib.h"
-#include "../deps/json.hpp"
+#include "../includes/api/library.hpp"
+#include "../includes/api/common.hpp"
+#include "../../deps/httplib.h"
+#include "../../deps/json.hpp"
 
 namespace Api
 {

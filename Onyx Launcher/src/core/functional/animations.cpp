@@ -1,4 +1,4 @@
-#include "animations.h"
+#include "../../includes/core/animations.h"
 #define PI 3.14159265358979323846f
 
 float Animations::eOutBounce(float t)
