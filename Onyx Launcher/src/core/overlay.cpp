@@ -17,8 +17,19 @@ void RenderLoadingOverlay()
 	ImVec2 winSize = GetWindowSize();
 	ImDrawList* dl = GetWindowDrawList();
 
-	// Dim background
-	dl->AddRectFilled(winPos, winPos + winSize, h->CO({ 0, 0, 0, 0.75f }));
+	// Fade-in support
+	static double s_lastCallTime = -1.0;
+	static double s_fadeStartTime = 0.0;
+	const float kFadeInSeconds = 0.25f;
+	double now = ImGui::GetTime();
+	bool firstAfterGap = (s_lastCallTime < 0) || (now - s_lastCallTime > 0.5);
+	if (firstAfterGap)
+		s_fadeStartTime = now;
+	s_lastCallTime = now;
+	float fade = (float)std::min(1.0, (now - s_fadeStartTime) / (double)kFadeInSeconds);
+
+	// Dim background with fade
+	dl->AddRectFilled(winPos, winPos + winSize, h->CO({ 0, 0, 0, 0.75f * fade }));
 
 	// Spinner
 	ImVec2 center = winPos + ImVec2(winSize.x * 0.5f, winSize.y * 0.5f - 10);
@@ -28,12 +39,14 @@ void RenderLoadingOverlay()
 	float end = start + IM_PI * 1.35f;
 	dl->PathClear();
 	dl->PathArcTo(center, radius, start, end, 48);
-	dl->PathStroke(h->CO(colors::Main), 0, 3.0f);
+	vec4 stroke = { colors::Main.x, colors::Main.y, colors::Main.z, colors::Main.w * fade };
+	dl->PathStroke(h->CO(stroke), 0, 3.0f);
 
 	// Label
 	vec2 ts = h->CT("Signing in...");
 	ImVec2 tpos = center + ImVec2(-ts.x * 0.5f, radius + 12);
-	dl->AddText(tpos, h->CO(colors::White), "Signing in...");
+	vec4 txt = { colors::White.x, colors::White.y, colors::White.z, colors::White.w * fade };
+	dl->AddText(tpos, h->CO(txt), "Signing in...");
 
 	// Block interactions behind the overlay by capturing mouse input
 	SetCursorPos(ImVec2(0, 0));
