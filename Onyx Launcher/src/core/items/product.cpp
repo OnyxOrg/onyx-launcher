@@ -70,7 +70,24 @@ bool Items::Product(const std::string& label, const std::string& expirationText,
 
 	// Then time left / expiry
 	window->DrawList->AddText(pos + vec2(6, size.y - h->CT("Time left: ").y - 10), h->CO(colors::Lwhite), "Time left: ");
-	window->DrawList->AddText(pos + vec2(6 + h->CT("Time left: ").x, size.y - h->CT("Time left: ").y - 10), h->CO(expirationColor), expirationText.c_str());
+
+	// Gradient text only for the value when it's exactly "Lifetime". Label remains flat color.
+	{
+		ImVec2 base = pos + vec2(6 + h->CT("Time left: ").x, size.y - h->CT("Time left: ").y - 10);
+		if (strcmp(expirationText.c_str(), "Lifetime") == 0)
+		{
+			const int vtxStart = window->DrawList->VtxBuffer.Size;
+			window->DrawList->AddText(base, h->CO(colors::Main), expirationText.c_str());
+			const int vtxEnd = window->DrawList->VtxBuffer.Size;
+			ImVec2 p0 = base;
+			ImVec2 p1 = base + h->CT(expirationText);
+			ShadeVertsLinearColorGradientWithAlpha(window->DrawList, vtxStart, vtxEnd, p0, p1, h->CO(colors::Main), h->CO(colors::Lwhite));
+		}
+		else
+		{
+			window->DrawList->AddText(base, h->CO(expirationColor), expirationText.c_str());
+		}
+	}
 	PopFont();
 
 	if (hov)
