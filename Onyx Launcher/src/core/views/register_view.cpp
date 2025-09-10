@@ -3,6 +3,13 @@
 void Views::RenderRegister(AppState& state, Alpha& alpha)
 {
 	const auto& window = GetCurrentWindow();
+	if (strlen(state.registerErrMsg) > 0)
+	{
+		SetCursorPos({ (window->Size.x - 220) / 2 + 5, 110 });
+		PushFont(fonts->InterM[0]);
+		draw->Text(state.registerErrMsg, colors::Red);
+		PopFont();
+	}
 	SetCursorPos({ (window->Size.x - 220) / 2, 135 });
 	items->Input("Username", USER, "", state.registerUsr, _size(state.registerUsr), 0);
 	SetCursorPosX((window->Size.x - 220) / 2);
@@ -25,7 +32,25 @@ void Views::RenderRegister(AppState& state, Alpha& alpha)
 		items->SetInputError("License key", licEmpty);
 		if (!userEmpty && !passEmpty && !licEmpty)
 		{
-			alpha.index = login;
+			// Call API to register
+			std::string username(state.registerUsr);
+			std::string password(state.registerPas);
+			std::string key(state.licbuf);
+			Api::AuthResult rr = Api::Register(username, password, key);
+			if (!rr.success)
+			{
+				strncpy_s(state.registerErrMsg, sizeof(state.registerErrMsg), rr.error.c_str(), _TRUNCATE);
+				state.registerErrMsg[sizeof(state.registerErrMsg) - 1] = '\0';
+			}
+			else
+			{
+				// On success, go back to login and prefill username
+				ZeroMemory(state.loginUsr, sizeof(state.loginUsr));
+				ZeroMemory(state.loginPas, sizeof(state.loginPas));
+				strncpy_s(state.loginUsr, sizeof(state.loginUsr), username.c_str(), _TRUNCATE);
+				ZeroMemory(state.registerErrMsg, sizeof(state.registerErrMsg));
+				alpha.index = login;
+			}
 		}
 	}
 
@@ -47,6 +72,7 @@ void Views::RenderRegister(AppState& state, Alpha& alpha)
 			items->ClearInputError("Username");
 			items->ClearInputError("Password");
 			items->ClearInputError("License key");
+			ZeroMemory(state.registerErrMsg, sizeof(state.registerErrMsg));
 			alpha.index = login;
 		}
 	}

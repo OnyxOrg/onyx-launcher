@@ -62,7 +62,52 @@ namespace Api
 		AuthResult result;
 		if (TryLogin(ApiConfig::GetPrimaryBaseUrl(), username, password, result))
 			return result;
+		// Fallbacks for local/dev environments
+		if (TryLogin("http://localhost:3000", username, password, result))
+			return result;
+		if (TryLogin("http://127.0.0.1:3000", username, password, result))
+			return result;
 		return result;
+	}
+
+	AuthResult Register(const std::string& username, const std::string& password, const std::string& licenseKey)
+	{
+		AuthResult out;
+		try
+		{
+			httplib::Client cli(ApiConfig::GetPrimaryBaseUrl().c_str());
+			cli.set_read_timeout(5, 0);
+			cli.set_write_timeout(5, 0);
+
+			nlohmann::json body;
+			body["username"] = username;
+			body["password"] = password;
+			body["key"] = licenseKey;
+
+			auto res = cli.Post("/api/webapp/register", body.dump(), "application/json");
+			if (!res)
+			{
+				out.error = "Connection failed";
+				return out;
+			}
+			if (res->status != 201)
+			{
+				nlohmann::json errj = nlohmann::json::parse(res->body, nullptr, false);
+				if (!errj.is_discarded() && errj.contains("message") && errj["message"].is_string())
+					out.error = errj["message"].get<std::string>();
+				else
+					out.error = "Registration failed";
+				return out;
+			}
+			out.success = true;
+			out.username = username;
+			return out;
+		}
+		catch (...)
+		{
+			out.error = "Unexpected error";
+			return out;
+		}
 	}
 }
 

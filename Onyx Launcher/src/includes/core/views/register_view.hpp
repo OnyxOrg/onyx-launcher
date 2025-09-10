@@ -2,6 +2,7 @@
 
 #include "includes/core/app_state.hpp"
 #include "includes/core/items/custom.hpp"
+#include "includes/api/auth.hpp"
 
 class Alpha;
 

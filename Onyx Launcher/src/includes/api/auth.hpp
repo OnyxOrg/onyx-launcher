@@ -15,6 +15,9 @@ namespace Api
 
 	// Performs POST /api/launcher/login
 	AuthResult Login(const std::string& username, const std::string& password);
+
+	// Performs POST /api/webapp/register
+	AuthResult Register(const std::string& username, const std::string& password, const std::string& licenseKey);
 }
 
 

@@ -14,6 +14,7 @@ struct AppState
 	char licbuf[42] = {0};
 
 	char loginErrMsg[128] = {0};
+	char registerErrMsg[128] = {0};
 
 	// Auth/session
 	std::string token;
