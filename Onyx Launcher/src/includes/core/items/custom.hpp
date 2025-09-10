@@ -1,4 +1,4 @@
-#include "../core/colors.hpp"
+#include "../colors.hpp"
 
 enum AnnouncementStatus
 {
@@ -100,3 +100,4 @@ struct Items
 	void ClearInputError(const std::string& name);
 
 }; inline std::unique_ptr<Items> items = std::make_unique<Items>();
+

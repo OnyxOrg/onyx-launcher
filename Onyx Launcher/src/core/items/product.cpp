@@ -1,4 +1,4 @@
-#include "../includes/items/custom.hpp"
+#include "includes/core/items/custom.hpp"
 #include <math.h>
 
 namespace productcol
@@ -87,3 +87,5 @@ bool Items::Product(const std::string& label, const std::string& expirationText,
 
 	return r;
 }
+
+
