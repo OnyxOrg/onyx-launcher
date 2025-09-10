@@ -60,7 +60,8 @@ bool Items::Input(const std::string& name, const std::string& iconA, const std::
 	uint64_t uFlags = uFlags = w.changeIcon ? flags & ~(ImGuiInputTextFlags_Password) : flags;
 	std::string inputLabel = "###" + name;
 
-	window->DrawList->PushClipRect(pos, pos + vec2(size.x - (12 * 2) - h->CT(iconA).x, GetFrameHeight()));
+	// Clip text area so it doesn't draw under the right icon or spill left of the inner padding
+	window->DrawList->PushClipRect(pos + vec2(GetStyle().FramePadding.x, 0), pos + vec2(size.x - (12 * 2) - h->CT(iconA).x, GetFrameHeight()));
 	bool r = InputText(inputLabel.c_str(), buf, bufSize, uFlags);
 	window->DrawList->PopClipRect();
 
