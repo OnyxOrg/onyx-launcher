@@ -121,6 +121,7 @@
     <Link>
       <SubSystem>Console</SubSystem>
       <GenerateDebugInformation>true</GenerateDebugInformation>
+      <AdditionalDependencies>Crypt32.lib;%(AdditionalDependencies)</AdditionalDependencies>
     </Link>
   </ItemDefinitionGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Release|x64'">
@@ -138,7 +139,7 @@
       <SubSystem>Windows</SubSystem>
       <GenerateDebugInformation>true</GenerateDebugInformation>
       <AdditionalLibraryDirectories>$(DXSDK_DIR)/Lib/x64;%(AdditionalLibraryDirectories)</AdditionalLibraryDirectories>
-      <AdditionalDependencies>d3d11.lib;d3dcompiler.lib;dxgi.lib;%(AdditionalDependencies)</AdditionalDependencies>
+      <AdditionalDependencies>d3d11.lib;d3dcompiler.lib;dxgi.lib;Crypt32.lib;%(AdditionalDependencies)</AdditionalDependencies>
     </Link>
   </ItemDefinitionGroup>
   <ItemGroup>
@@ -171,6 +172,7 @@
     <ClCompile Include="src\modules\imgui\imgui_impl_win32.cpp" />
     <ClCompile Include="src\modules\imgui\imgui_tables.cpp" />
     <ClCompile Include="src\modules\imgui\imgui_widgets.cpp" />
+    <ClCompile Include="src\core\utils\credentials.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="src\includes\api\auth.hpp" />
@@ -188,6 +190,7 @@
     <ClInclude Include="src\includes\core\time_util.hpp" />
     <ClInclude Include="src\includes\core\views\login_view.hpp" />
     <ClInclude Include="src\includes\core\views\register_view.hpp" />
+    <ClInclude Include="src\includes\core\utils\credentials.hpp" />
     <ClInclude Include="src\headers\api\discord.hpp" />
     <ClInclude Include="src\includes\api\library.hpp" />
     <ClInclude Include="src\deps\httplib.h" />

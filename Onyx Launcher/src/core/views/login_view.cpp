@@ -13,6 +13,21 @@ void Views::RenderLogin(AppState& state, Alpha& alpha, Alpha& subalpha)
 		PopFont();
 	}
 
+	// Smooth auto-fill + auto-signin on first frame if credentials exist
+	static bool triedAutoSignIn = false;
+	if (!triedAutoSignIn)
+	{
+		triedAutoSignIn = true;
+		std::string su, sp;
+		if (Credentials::Load(su, sp))
+		{
+			strncpy_s(state.loginUsr, sizeof(state.loginUsr), su.c_str(), _TRUNCATE);
+			strncpy_s(state.loginPas, sizeof(state.loginPas), sp.c_str(), _TRUNCATE);
+			state.remember = true;
+			AuthFlow::KickoffAsyncLogin(state, state.loginUsr, state.loginPas);
+		}
+	}
+
 	SetCursorPos({ (window->Size.x - 220) / 2, 135 });
 	items->Input("Username", USER, "", state.loginUsr, _size(state.loginUsr), 0);
 
@@ -113,5 +128,4 @@ void Views::RenderLogin(AppState& state, Alpha& alpha, Alpha& subalpha)
 		}
 	}
 }
-
 
