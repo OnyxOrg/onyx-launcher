@@ -3,13 +3,6 @@
 void Views::RenderRegister(AppState& state, Alpha& alpha)
 {
 	const auto& window = GetCurrentWindow();
-	if (strlen(state.registerErrMsg) > 0)
-	{
-		SetCursorPos({ (window->Size.x - 220) / 2 + 5, 110 });
-		PushFont(fonts->InterM[0]);
-		draw->Text(state.registerErrMsg, colors::Red);
-		PopFont();
-	}
 	SetCursorPos({ (window->Size.x - 220) / 2, 135 });
 	items->Input("Username", USER, "", state.registerUsr, _size(state.registerUsr), 0);
 	SetCursorPosX((window->Size.x - 220) / 2);
@@ -77,6 +70,48 @@ void Views::RenderRegister(AppState& state, Alpha& alpha)
 		}
 	}
 	PopFont();
+
+	// Error area below the redirect text
+	if (strlen(state.registerErrMsg) > 0)
+	{
+		std::string msg(state.registerErrMsg);
+		float maxWidth = window->Size.x - 40.0f;
+		std::string line1 = msg;
+		std::string line2;
+
+		if (h->CT(msg).x > maxWidth)
+		{
+			std::string current;
+			size_t lastBreak = std::string::npos;
+			float width = 0.0f;
+			for (size_t i = 0; i < msg.size(); ++i)
+			{
+				char c = msg[i];
+				current.push_back(c);
+				if (c == ' ') lastBreak = i;
+				width = h->CT(current).x;
+				if (width > maxWidth)
+				{
+					size_t cut = (lastBreak != std::string::npos) ? lastBreak : i;
+					line1 = msg.substr(0, cut);
+					line2 = msg.substr(cut + 1);
+					break;
+				}
+			}
+		}
+
+		PushFont(fonts->InterM[0]);
+		float w1 = h->CT(line1).x;
+		SetCursorPosX((window->Size.x - w1) / 2);
+		draw->Text(line1, colors::Red);
+		if (!line2.empty())
+		{
+			const float tightenPx = -10.0f; // negative to tighten line spacing
+			SetCursorPosY(GetCursorPosY() + tightenPx);
+			float w2 = h->CT(line2).x;
+			SetCursorPosX((window->Size.x - w2) / 2);
+			draw->Text(line2, colors::Red);
+		}
+		PopFont();
+	}
 }
-
-
