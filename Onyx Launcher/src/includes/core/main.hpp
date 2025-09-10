@@ -1,3 +1,5 @@
+// prevent multiple inclusion in one translation unit
+#pragma once
 //#define WINDOW_BG
 #define IMGUI_DEFINE_MATH_OPERATORS
 #define NOMINMAX

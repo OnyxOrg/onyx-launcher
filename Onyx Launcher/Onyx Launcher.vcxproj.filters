@@ -21,6 +21,12 @@
     <ClCompile Include="src\core\functional\animations.cpp" />
     <ClCompile Include="src\core\functional\misc.cpp" />
     <ClCompile Include="src\core\functional\window.cpp" />
+    <ClCompile Include="src\core\app.cpp" />
+    <ClCompile Include="src\core\overlay.cpp" />
+    <ClCompile Include="src\core\auth_flow.cpp" />
+    <ClCompile Include="src\core\time_util.cpp" />
+    <ClCompile Include="src\core\views\login_view.cpp" />
+    <ClCompile Include="src\core\views\register_view.cpp" />
     <ClCompile Include="src\core\items\announcement.cpp" />
     <ClCompile Include="src\core\items\button.cpp" />
     <ClCompile Include="src\core\items\checkbox.cpp" />
@@ -49,6 +55,13 @@
     <ClInclude Include="src\includes\core\animations.h" />
     <ClInclude Include="src\includes\core\main.hpp" />
     <ClInclude Include="src\includes\core\items\custom.hpp" />
+    <ClInclude Include="src\includes\core\app.hpp" />
+    <ClInclude Include="src\includes\core\app_state.hpp" />
+    <ClInclude Include="src\includes\core\overlay.hpp" />
+    <ClInclude Include="src\includes\core\auth_flow.hpp" />
+    <ClInclude Include="src\includes\core\time_util.hpp" />
+    <ClInclude Include="src\includes\core\views\login_view.hpp" />
+    <ClInclude Include="src\includes\core\views\register_view.hpp" />
     <ClInclude Include="src\headers\api\discord.hpp" />
     <ClInclude Include="src\includes\api\library.hpp" />
     <ClInclude Include="src\deps\httplib.h" />

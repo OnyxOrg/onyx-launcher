@@ -1,0 +1,56 @@
+#include "includes/core/views/register_view.hpp"
+
+void Views::RenderRegister(AppState& state, Alpha& alpha)
+{
+	const auto& window = GetCurrentWindow();
+	SetCursorPos({ (window->Size.x - 220) / 2, 135 });
+	items->Input("Username", USER, "", state.registerUsr, _size(state.registerUsr), 0);
+	SetCursorPosX((window->Size.x - 220) / 2);
+	items->Input("Password", EYE_SLASHED, EYE, state.registerPas, _size(state.registerPas), ImGuiInputTextFlags_Password);
+
+	SetCursorPosX((window->Size.x - 220) / 2);
+	items->Input("License key", KEY, "", state.licbuf, _size(state.licbuf));
+
+	std::string buttonLabel = "SIGN UP";
+	SetCursorPosX((window->Size.x - 220) / 2);
+	bool clickedSubmit = items->Button(buttonLabel, { window->Size.x - GetCursorPosX() * 2, 40 });
+	bool enterPressed = IsKeyPressed(ImGuiKey_Enter) || IsKeyPressed(ImGuiKey_KeypadEnter);
+	if (clickedSubmit || enterPressed)
+	{
+		bool userEmpty = strlen(state.registerUsr) == 0;
+		bool passEmpty = strlen(state.registerPas) == 0;
+		bool licEmpty = strlen(state.licbuf) == 0;
+		items->SetInputError("Username", userEmpty);
+		items->SetInputError("Password", passEmpty);
+		items->SetInputError("License key", licEmpty);
+		if (!userEmpty && !passEmpty && !licEmpty)
+		{
+			alpha.index = login;
+		}
+	}
+
+	// Below button: redirect to Sign in
+	PushFont(fonts->InterM[0]);
+	{
+		std::string textLabel = "Already have an account? ";
+		std::string redirectLabel = "Sign in";
+		SetCursorPosX((window->Size.x - h->CT(textLabel + redirectLabel).x) / 2);
+		draw->Text(textLabel, colors::Lwhite2);
+		SameLine();
+		if (items->TextButton(redirectLabel, redirectLabel, colors::Main))
+		{
+			ZeroMemory(state.loginUsr, sizeof(state.loginUsr));
+			ZeroMemory(state.loginPas, sizeof(state.loginPas));
+			ZeroMemory(state.registerUsr, sizeof(state.registerUsr));
+			ZeroMemory(state.registerPas, sizeof(state.registerPas));
+			ZeroMemory(state.licbuf, sizeof(state.licbuf));
+			items->ClearInputError("Username");
+			items->ClearInputError("Password");
+			items->ClearInputError("License key");
+			alpha.index = login;
+		}
+	}
+	PopFont();
+}
+
+

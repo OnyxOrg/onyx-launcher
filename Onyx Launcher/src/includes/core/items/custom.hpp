@@ -1,3 +1,4 @@
+#pragma once
 #include "../colors.hpp"
 
 enum AnnouncementStatus
