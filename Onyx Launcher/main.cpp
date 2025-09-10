@@ -3,6 +3,7 @@
 #include <ctime>
 #include <chrono>
 #include <cstdio>
+#include <atomic>
 #include "modules\\api\\auth.hpp"
 #include "modules\\api\\library.hpp"
 #include <cstring>
@@ -20,6 +21,12 @@ static std::string g_username;
 static std::string g_role;
 static bool g_authenticated = false;
 static std::vector<Api::LibraryProduct> g_ownedProducts;
+static std::atomic<int> g_loginState{ 0 }; // 0 idle, 1 loading, 2 success, 3 failure
+static bool g_isLoading = false;
+static std::string g_loginError;
+static bool g_showPostLoginSpinner = false;
+static double g_postSpinnerEndTime = 0.0;
+static constexpr float kPostLoginSpinnerSeconds = 2.5f; // spinner duration (seconds)
 
 static std::string FormatRole(const std::string&)
 {
@@ -96,6 +103,33 @@ static std::string FormatTimeLeftFromIso(const std::string& iso, vec4& outColor)
 	else outColor = colors::Red;
 
 	return text;
+}
+
+// Simple fullscreen loading overlay with spinner
+static void RenderLoadingOverlay()
+{
+	const auto& wnd = GetCurrentWindow();
+	ImDrawList* dl = wnd->DrawList;
+	ImVec2 pos = wnd->Pos;
+	ImVec2 size = wnd->Size;
+
+	// Dim background
+	dl->AddRectFilled(pos, pos + size, h->CO({ 0, 0, 0, 0.75f }));
+
+	// Spinner
+	ImVec2 center = pos + ImVec2(size.x * 0.5f, size.y * 0.5f - 10);
+	float t = (float)ImGui::GetTime();
+	float radius = 18.0f;
+	float start = t * 4.0f;
+	float end = start + IM_PI * 1.35f;
+	dl->PathClear();
+	dl->PathArcTo(center, radius, start, end, 48);
+	dl->PathStroke(h->CO(colors::Main), 0, 3.0f);
+
+	// Label
+	vec2 ts = h->CT("Signing in...");
+	ImVec2 tpos = center + ImVec2(-ts.x * 0.5f, radius + 12);
+	dl->AddText(tpos, h->CO(colors::White), "Signing in...");
 }
 
 static bool LauncherLogin(const std::string& username, const std::string& password, std::string& outError)
@@ -224,6 +258,27 @@ INT __stdcall WinMain(HINSTANCE, HINSTANCE, LPSTR, int)
                     {
                         SetCursorPosX((window->Size.x - 215) / 2);
                         items->Checkbox("Remember me", &remember);
+
+                        // While authenticating, do NOT show spinner yet
+
+                        // Transition or show error when async login completes
+                        if (g_isLoading && g_loginState == 2)
+                        {
+                            // Successful login: show a 3s spinner on login screen, then navigate
+                            g_showPostLoginSpinner = true;
+                            g_postSpinnerEndTime = ImGui::GetTime() + kPostLoginSpinnerSeconds;
+                            g_isLoading = false;
+                            g_loginState = 0;
+                            // Navigation will occur after the spinner delay (handled below)
+                        }
+                        else if (g_isLoading && g_loginState == 3)
+                        {
+                            // Failure: no spinner, just show error
+                            g_isLoading = false;
+                            g_loginState = 0;
+                            strncpy_s(loginErrMsg, sizeof(loginErrMsg), g_loginError.c_str(), _TRUNCATE);
+                            loginErrMsg[sizeof(loginErrMsg) - 1] = '\0';
+                        }
                     }
 
                     if (alpha->tab == registerr)
@@ -246,18 +301,23 @@ INT __stdcall WinMain(HINSTANCE, HINSTANCE, LPSTR, int)
                             items->SetInputError("Password", _passEmpty);
                             if (!_userEmpty && !_passEmpty)
                             {
-                                std::string err;
-                                if (LauncherLogin(loginUsr, loginPas, err))
-                                {
-                                    loginErrMsg[0] = '\0';
-                                    alpha->index = home;
-                                    subalpha->index = dashboard; // make sure to change this aswell
-                                }
-                                else
-                                {
-                                    strncpy_s(loginErrMsg, sizeof(loginErrMsg), err.c_str(), _TRUNCATE);
-                                    loginErrMsg[sizeof(loginErrMsg) - 1] = '\0';
-                                }
+                                // Start async login with loading overlay
+                                g_isLoading = true;
+                                g_loginState = 1;
+                                loginErrMsg[0] = '\0';
+                                std::thread([=]() {
+                                    std::string err;
+                                    bool ok = LauncherLogin(loginUsr, loginPas, err);
+                                    if (ok)
+                                    {
+                                        g_loginState = 2;
+                                    }
+                                    else
+                                    {
+                                        g_loginError = err;
+                                        g_loginState = 3;
+                                    }
+                                }).detach();
                             }
                         }
                         else
@@ -335,6 +395,18 @@ INT __stdcall WinMain(HINSTANCE, HINSTANCE, LPSTR, int)
                         }
 
                         PopFont();
+
+                        // After success: show spinner as transition on login view, then navigate
+                        if (g_showPostLoginSpinner)
+                        {
+                            RenderLoadingOverlay();
+                            if (ImGui::GetTime() >= g_postSpinnerEndTime)
+                            {
+                                g_showPostLoginSpinner = false;
+                                alpha->index = home;
+                                subalpha->index = dashboard;
+                            }
+                        }
                     }
                 }
                 PopStyleVar(); // itemspacing
@@ -393,6 +465,20 @@ INT __stdcall WinMain(HINSTANCE, HINSTANCE, LPSTR, int)
 
                 if (subalpha->tab == dashboard)
                 {
+                    // If we have a pending post-login spinner, render it and delay entering dashboard for 3 seconds
+                    if (g_showPostLoginSpinner)
+                    {
+                        RenderLoadingOverlay();
+                        if (ImGui::GetTime() >= g_postSpinnerEndTime)
+                        {
+                            g_showPostLoginSpinner = false;
+                        }
+                        else
+                        {
+                            // Skip rendering dashboard contents while spinner is shown
+                            goto SKIP_DASHBOARD_CONTENTS;
+                        }
+                    }
                     SetCursorPos({ 190, 33 });
                     custom->Banner("Dashboard", "Welcome back, relique", images->banner);
 
@@ -410,6 +496,7 @@ INT __stdcall WinMain(HINSTANCE, HINSTANCE, LPSTR, int)
                         PopStyleVar(); // itemspacing
                     }
                     custom->EndChild();
+SKIP_DASHBOARD_CONTENTS:;
                 }
 
                 if (subalpha->tab == library)
