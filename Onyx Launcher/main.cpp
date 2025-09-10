@@ -1,5 +1,8 @@
 ﻿#include ".\items\custom.hpp"
 #include <thread>
+#include <ctime>
+#include <chrono>
+#include <cstdio>
 #include "modules\\api\\auth.hpp"
 #include "modules\\api\\library.hpp"
 #include <cstring>
@@ -24,6 +27,76 @@ static std::string FormatRole(const std::string&)
 }
 
 vec4 GetRoleColor(const std::string&) { return colors::RoleMember; }
+
+// Parse an ISO-8601 timestamp like "YYYY-MM-DDTHH:MM:SS[.mmm]Z" to UTC time_t
+static bool ParseIsoUtcToTimeT(const std::string& iso, std::time_t& outUtc)
+{
+	int year = 0, mon = 0, day = 0, hour = 0, min = 0, sec = 0;
+	int matched = ::sscanf_s(iso.c_str(), "%d-%d-%dT%d:%d:%d", &year, &mon, &day, &hour, &min, &sec);
+	if (matched < 5) return false; // need at least Y-M-D T H:M
+	if (matched == 5) sec = 0;
+	std::tm tm{};
+	tm.tm_year = year - 1900;
+	tm.tm_mon = mon - 1;
+	tm.tm_mday = day;
+	tm.tm_hour = hour;
+	tm.tm_min = min;
+	tm.tm_sec = sec;
+	std::time_t t = _mkgmtime(&tm);
+	if (t == (std::time_t)-1) return false;
+	outUtc = t;
+	return true;
+}
+
+// Format remaining time similarly to webapp (no special rounding)
+static std::string FormatTimeLeftFromIso(const std::string& iso, vec4& outColor)
+{
+	if (iso.empty())
+	{
+		outColor = colors::Green;
+		return std::string("Lifetime");
+	}
+
+	std::time_t targetUtc;
+	if (!ParseIsoUtcToTimeT(iso, targetUtc))
+	{
+		outColor = colors::Main;
+		return std::string("Active");
+	}
+
+	std::time_t nowUtc = std::time(nullptr);
+	long long diffSec = static_cast<long long>(targetUtc) - static_cast<long long>(nowUtc);
+	if (diffSec <= 0)
+	{
+		outColor = colors::Red;
+		return std::string("Expired");
+	}
+
+	long long minutes = diffSec / 60;
+	long long hours = minutes / 60;
+	long long days = hours / 24;
+	long long months = days / 30;
+	long long years = days / 365;
+
+	std::string text;
+	if (years >= 1)
+		text = std::to_string(years) + " year" + (years != 1 ? "s" : "") + " left";
+	else if (months >= 1)
+		text = std::to_string(months) + " month" + (months != 1 ? "s" : "") + " left";
+	else if (days >= 1)
+		text = std::to_string(days) + " day" + (days != 1 ? "s" : "") + " left";
+	else if (hours >= 1)
+		text = std::to_string(hours) + " hour" + (hours != 1 ? "s" : "") + " left";
+	else
+		text = std::to_string((long long)std::max<long long>(1, minutes)) + " min" + (minutes != 1 ? "s" : "") + " left";
+
+	// Color thresholds: >7 days = green, 1-7 days = yellow, <=23 hours = red
+	if (days > 7) outColor = colors::Green;
+	else if (hours > 23 || (days >= 1 && days <= 7)) outColor = colors::Yellow;
+	else outColor = colors::Red;
+
+	return text;
+}
 
 static bool LauncherLogin(const std::string& username, const std::string& password, std::string& outError)
 {
@@ -363,28 +436,9 @@ INT __stdcall WinMain(HINSTANCE, HINSTANCE, LPSTR, int)
                             if (p.status == "offline") status = ProductStatus::Offline;
                             else if (p.status == "updating") status = ProductStatus::Updating;
 
-                            // Compute time-left text and color like webapp
-                            std::string timeLeftText = p.durationLabel;
+                            // Compute precise time-left from ISO expiry
                             vec4 timeLeftColor = colors::Main;
-                            if (!p.expiresAt.empty())
-                            {
-                                // Parse ISO date and compute human remaining
-                                // Very lightweight parsing using std::tm is complex; show label and adjust color by rough heuristics
-                                timeLeftText = p.durationLabel.empty() ? std::string("Active") : p.durationLabel;
-                                // Heuristic coloring: if label mentions min/hour -> critical, day -> warning, month -> normal
-                                std::string lower = timeLeftText; for (char& c : lower) c = (char)tolower((unsigned char)c);
-                                if (lower.find("min") != std::string::npos || lower.find("hour") != std::string::npos)
-                                    timeLeftColor = colors::Red;
-                                else if (lower.find("day") != std::string::npos)
-                                    timeLeftColor = colors::Yellow;
-                                else
-                                    timeLeftColor = colors::Green;
-                            }
-                            else
-                            {
-                                timeLeftText = "Lifetime";
-                                timeLeftColor = colors::Green;
-                            }
+                            std::string timeLeftText = FormatTimeLeftFromIso(p.expiresAt, timeLeftColor);
 
                             if (items->Product(p.name, timeLeftText, status, images->product, timeLeftColor))
                             {
