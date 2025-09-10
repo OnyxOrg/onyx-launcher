@@ -113,6 +113,8 @@ namespace App
 
 			if (subalpha->tab == dashboard)
 			{
+				// Precompute welcome string so goto skip won't bypass initialization
+				std::string welcomeMsg = std::string("Welcome back, ") + (state.authenticated ? state.username : std::string("relique"));
 				if (state.showPostLoginSpinner)
 				{
 					RenderLoadingOverlay();
@@ -126,7 +128,7 @@ namespace App
 					}
 				}
 				SetCursorPos({ 190, 33 });
-				custom->Banner("Dashboard", "Welcome back, relique", images->banner);
+				custom->Banner("Dashboard", welcomeMsg.c_str(), images->banner);
 
 				SetCursorPos({ 190, 230 });
 				custom->BeginChild("News", { window->Size.x + 160 - GetCursorPosX() * 2, (window->Size.y - 200 - 50) - 10});
