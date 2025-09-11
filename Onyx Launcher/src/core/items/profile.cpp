@@ -41,7 +41,7 @@ bool Items::Profile(const std::string& name, const std::string& role, ID3D11Shad
 
 	// Role uses independent font and size
 	PushFont(fonts->userRoleFont);
-	// Choose sidebar role colors to match web app sidebar
+	// Choose role colors matching web app. Caller passes humanized text; if not linked, text is "User".
 	vec4 rc = colors::RoleUserProfile;
 	if (_stricmp(role.c_str(), "Owner") == 0) rc = colors::RoleOwnerProfile;
 	else if (_stricmp(role.c_str(), "Developer") == 0) rc = colors::RoleDevProfile;

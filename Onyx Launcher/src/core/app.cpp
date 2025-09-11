@@ -252,7 +252,8 @@ namespace App
 					PopFont();
 
 					{
-						std::string role = state.authenticated ? FormatRole(state.role) : std::string("User");
+						// If not linked to Discord, always show "User" (even if DB stores a higher role)
+						std::string role = (!state.authenticated || state.discordId.empty()) ? std::string("User") : FormatRole(state.role);
 						PushFont(fonts->profileRoleFont);
 						vec2 roleSize = h->CT(role);
 
@@ -262,7 +263,9 @@ namespace App
 						child->DrawList->AddRectFilled(rectMin, rectMax, h->CO(colors::Gray2), 8);
 
 						vec2 textPos = { rectMin.x + (rectMax.x - rectMin.x - roleSize.x) / 2, rectMin.y + (rectMax.y - rectMin.y - roleSize.y) / 2 };
-						child->DrawList->AddText(textPos, h->CO(GetRoleColor(state.role)), role.c_str());
+						// Color based on role string we are displaying
+						std::string raw = (!state.authenticated || state.discordId.empty()) ? std::string("user") : state.role;
+						child->DrawList->AddText(textPos, h->CO(GetRoleColor(raw)), role.c_str());
 						PopFont();
 					}
 
