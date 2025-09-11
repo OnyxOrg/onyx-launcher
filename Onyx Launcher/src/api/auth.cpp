@@ -109,6 +109,39 @@ namespace Api
 			return out;
 		}
 	}
+
+	UserInfo GetUserInfo(const std::string& username)
+	{
+		UserInfo info;
+		try
+		{
+			httplib::Client cli(ApiConfig::GetPrimaryBaseUrl().c_str());
+			cli.set_read_timeout(5, 0);
+			cli.set_write_timeout(5, 0);
+			std::string path = std::string("/api/user/") + username;
+			auto res = cli.Get(path.c_str());
+			if (!res || res->status != 200)
+				return info;
+			nlohmann::json j = nlohmann::json::parse(res->body, nullptr, false);
+			if (j.is_discarded()) return info;
+			info.ok = true;
+			info.username = j.value<std::string>("username", username);
+			if (j.contains("discord") && j["discord"].is_object())
+			{
+				auto d = j["discord"];
+				info.discordConnected = d.value("connected", false);
+				info.discordId = d.value<std::string>("id", "");
+				info.discordUsername = d.value<std::string>("username", "");
+				info.discordAvatar = d.value<std::string>("avatar", "");
+			}
+			info.role = j.value<std::string>("role", "User");
+			return info;
+		}
+		catch (...)
+		{
+			return info;
+		}
+	}
 }
 
 

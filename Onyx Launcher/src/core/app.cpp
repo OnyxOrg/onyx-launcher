@@ -3,6 +3,7 @@
 #include "includes/core/views/login_view.hpp"
 #include "includes/core/views/register_view.hpp"
 #include "includes/core/overlay.hpp"
+#include "includes/api/common.hpp"
 #include <thread>
 #include <thread>
 
@@ -90,7 +91,9 @@ namespace App
 			PushFont(fonts->RennerM);
 			SetCursorPos({ 15, window->Size.y - 58 });
 			{
-				const char* dispUser = state.authenticated ? state.username.c_str() : "relique";
+				const char* dispUser = state.authenticated
+					? (state.discordUsername.empty() ? state.username.c_str() : state.discordUsername.c_str())
+					: "relique";
 				std::string roleDisplay = state.authenticated ? FormatRole(state.role) : std::string("User");
 				if (items->Profile(dispUser, roleDisplay.c_str(), images->profilePic)) subalpha->index = profile;
 			}
@@ -228,11 +231,11 @@ SKIP_DASHBOARD_CONTENTS:;
 					PushFont(fonts->InterM[2]);
 
 					SetCursorPos({ 95, 30 });
-					draw->Text(state.authenticated ? state.username.c_str() : "relique", colors::Main);
+					draw->Text(state.authenticated ? (state.discordUsername.empty() ? state.username.c_str() : state.discordUsername.c_str()) : "relique", colors::Main);
 
 					SetCursorPos({ 95, 50 });
 					PushFont(fonts->userUidFont);
-					draw->Text("UID: Unknown", colors::Lwhite2);
+					draw->Text(state.discordId.empty() ? "UID: Unknown" : (std::string("UID: ") + state.discordId).c_str(), colors::Lwhite2);
 					PopFont();
 
 					{
@@ -270,7 +273,30 @@ SKIP_DASHBOARD_CONTENTS:;
 					draw->Text("Log in with your Discord Account to \nunlock your full profile: avatar, UID,\nregistration date, and more.", colors::Lwhite2);
 
 					SetCursorPos({ 15, 115 });
-					(void)items->ButtonIcon("Link Discord Account", DISCORD, { 195, 35 });
+					if (items->ButtonIcon("Link Discord Account", DISCORD, { 195, 35 }))
+					{
+						std::string authUrl = ApiConfig::BuildDiscordAuthorizeUrl(state.username);
+						std::wstring wurl(authUrl.begin(), authUrl.end());
+						std::thread([wurl] {
+							ShellExecuteW(nullptr, L"open", wurl.c_str(), nullptr, nullptr, SW_SHOWNORMAL);
+						}).detach();
+
+						// Poll the bot for updated Discord link and refresh state
+						std::thread([&state]() {
+							for (int i = 0; i < 20; ++i)
+							{
+								std::this_thread::sleep_for(std::chrono::milliseconds(500));
+								Api::UserInfo ui = Api::GetUserInfo(state.username);
+								if (ui.ok && ui.discordConnected && !ui.discordId.empty())
+								{
+									state.discordId = ui.discordId;
+									state.discordUsername = ui.discordUsername;
+									state.discordAvatarHash = ui.discordAvatar;
+									break;
+								}
+							}
+						}).detach();
+					}
 
 					PopFont();
 				}
