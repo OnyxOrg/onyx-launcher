@@ -329,7 +329,7 @@ namespace App
 
 						PushFont(fonts->InterM[2]);
 						SetCursorPos({ 15, 40 });
-						draw->Text("Log in with your Discord Account to \nunlock your full profile: avatar, UID,\nregistration date, and more.", colors::Lwhite2);
+						draw->Text("Log in with your Discord Account to \nunlock your full profile: avatar, UID, and more.", colors::Lwhite2);
 						SetCursorPos({ 15, 115 });
 						if (items->ButtonIcon("Link Discord Account", DISCORD, { 195, 35 }))
 						{
