@@ -1,5 +1,7 @@
 #include "includes/core/views/login_view.hpp"
 #include <thread>
+#include "includes/api/common.hpp"
+#include "includes/core/utils/image_loader.hpp"
 
 void Views::RenderLogin(AppState& state, Alpha& alpha, Alpha& subalpha)
 {
@@ -134,12 +136,21 @@ void Views::RenderLogin(AppState& state, Alpha& alpha, Alpha& subalpha)
 			alpha.index = home;
 			subalpha.index = dashboard;
 
-			// Refresh user info to pick up Discord link status after login (no avatar)
+			// Refresh user info to pick up Discord link status after login and load avatar
 			Api::UserInfo ui = Api::GetUserInfo(state.username);
 			if (ui.ok)
 			{
 				state.discordId = ui.discordId;
 				state.discordUsername = ui.discordUsername;
+				state.discordAvatarHash = ui.discordAvatar;
+				if (!state.discordId.empty() && !state.discordAvatarHash.empty())
+				{
+					std::string url = ApiConfig::BuildDiscordAvatarUrl(state.discordId, state.discordAvatarHash, 128);
+					std::thread([url, &state]() {
+						ID3D11ShaderResourceView* srv = ImageLoader::LoadTextureFromUrl(url.c_str());
+						if (srv) state.avatarTexture = srv;
+					}).detach();
+				}
 				// After fetching link, ask bot to sync live role once more
 				auto sync = Api::SyncRole(state.username, state.discordId);
 				if (sync.ok && !sync.role.empty()) state.role = sync.role;

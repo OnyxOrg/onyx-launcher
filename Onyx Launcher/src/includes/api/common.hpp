@@ -46,4 +46,17 @@ namespace ApiConfig
 		url += "&state=" + stateUsername;
 		return url;
 	}
+
+	// Build a Discord CDN avatar URL. If avatarHash is empty, return empty string.
+	// size must be a power of two from 16 to 4096. We default to 128.
+	inline std::string BuildDiscordAvatarUrl(const std::string& userId, const std::string& avatarHash, int size = 128)
+	{
+		if (userId.empty() || avatarHash.empty()) return std::string();
+		// Animated hashes start with "a_" and should use .gif. Otherwise .png
+		bool isGif = avatarHash.rfind("a_", 0) == 0;
+		char buf[256] = {0};
+		_snprintf_s(buf, _TRUNCATE, "https://cdn.discordapp.com/avatars/%s/%s.%s?size=%d",
+			userId.c_str(), avatarHash.c_str(), isGif ? "gif" : "png", size);
+		return std::string(buf);
+	}
 }

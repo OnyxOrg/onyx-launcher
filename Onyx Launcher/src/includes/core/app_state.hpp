@@ -23,9 +23,11 @@ struct AppState
 	bool authenticated = false;
 	std::vector<Api::LibraryProduct> ownedProducts;
 
-	// Discord linked state (kept minimal; avatar removed for now)
+	// Discord linked state
 	std::string discordId;
 	std::string discordUsername;
+	std::string discordAvatarHash; // hash only
+	ID3D11ShaderResourceView* avatarTexture = nullptr; // created from CDN when available
 
 	// Async login states
 	std::atomic<int> loginState{ 0 }; // 0 idle, 1 loading, 2 success, 3 failure

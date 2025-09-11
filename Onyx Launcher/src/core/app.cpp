@@ -4,6 +4,7 @@
 #include "includes/core/views/register_view.hpp"
 #include "includes/core/overlay.hpp"
 #include "includes/api/common.hpp"
+#include "includes/core/utils/image_loader.hpp"
 #include <thread>
 #include <thread>
 
@@ -147,7 +148,8 @@ namespace App
 					? (state.discordUsername.empty() ? state.username.c_str() : state.discordUsername.c_str())
 					: "relique";
 				std::string roleDisplay = state.authenticated ? FormatRole(state.role) : std::string("User");
-				if (items->Profile(dispUser, roleDisplay.c_str(), images->profilePic)) subalpha->index = profile;
+				ID3D11ShaderResourceView* avatar = state.avatarTexture ? state.avatarTexture : images->profilePic;
+				if (items->Profile(dispUser, roleDisplay.c_str(), avatar)) subalpha->index = profile;
 			}
 			PopFont();
 
@@ -278,7 +280,7 @@ namespace App
 						vec2 avatarSize = { 60, 60 };
 						vec2 avatarPos = child->DC.CursorPos;
 						float rounding = avatarSize.y * 0.5f;
-						ID3D11ShaderResourceView* tex = images->profilePic;
+						ID3D11ShaderResourceView* tex = state.avatarTexture ? state.avatarTexture : images->profilePic;
 						child->DrawList->AddImageRounded((ImTextureID)tex, avatarPos, avatarPos + avatarSize, {}, { 1, 1 }, h->CO(colors::White), rounding);
 						child->DrawList->AddRect(avatarPos, avatarPos + avatarSize, h->CO(colors::Gray), rounding, 0, 1.0f);
 					}
@@ -367,6 +369,15 @@ namespace App
 									{
 										state.discordId = ui.discordId;
 										state.discordUsername = ui.discordUsername;
+										state.discordAvatarHash = ui.discordAvatar;
+										if (!state.discordId.empty() && !state.discordAvatarHash.empty())
+										{
+											std::string url = ApiConfig::BuildDiscordAvatarUrl(state.discordId, state.discordAvatarHash, 128);
+											std::thread([url, &state]() {
+												ID3D11ShaderResourceView* srv = ImageLoader::LoadTextureFromUrl(url.c_str());
+												if (srv) state.avatarTexture = srv;
+											}).detach();
+										}
 										// After link established, sync role immediately
 										auto sync = Api::SyncRole(state.username, state.discordId);
 										if (sync.ok && !sync.role.empty()) state.role = sync.role;
