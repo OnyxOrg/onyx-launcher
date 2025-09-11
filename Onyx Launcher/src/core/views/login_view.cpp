@@ -40,6 +40,13 @@ void Views::RenderLogin(AppState& state, Alpha& alpha, Alpha& subalpha)
 
 	if (state.isLoading && state.loginState == 2)
 	{
+		// Persist credentials based on "Remember me" choice
+		if (state.remember) {
+			(void)Credentials::Save(state.loginUsr, state.loginPas);
+		} else {
+			(void)Credentials::Clear();
+		}
+
 		state.showPostLoginSpinner = true;
 		state.postSpinnerEndTime = ImGui::GetTime() + AppState::kPostLoginSpinnerSeconds;
 		state.isLoading = false;
