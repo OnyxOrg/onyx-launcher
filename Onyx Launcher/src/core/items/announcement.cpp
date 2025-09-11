@@ -19,8 +19,10 @@ void Items::Announcement(const std::string& title, const std::string& descriptio
 	vec2 pos = window->DC.CursorPos;
 	vec2 size = { window->Size.x - GetCursorPosX() * 2, 135 }; // if its not used in child change X size to 580 :<
 
-	vec4 statusCol = GetFromMap(AnnouncementColors, status);
-	std::string infoLabel = GetFromMap(AnnouncementLabels, status);
+	// Status parameter kept for API compatibility, but not used anymore
+	(void)status;
+
+	// Labels removed: no status badge rendering
 
 	ItemSize(size);
 	if (!ItemAdd({ pos, pos + size }, 0))
@@ -38,42 +40,18 @@ void Items::Announcement(const std::string& title, const std::string& descriptio
 
 	PopFont();
 
-	// Use configurable announcementStatusFont for date and status elements
+	// Use configurable announcementStatusFont for date element
 	PushFont(fonts->announcementStatusFont);
 
 	vec2 dateSize = h->CT(date);
-	vec2 infoLabelSize = h->CT(infoLabel);
 
 	window->DrawList->AddText(pos + vec2(size.x - dateSize.x - 10, 10 + (titleSize.y - dateSize.y) / 2), h->CO(descriptionC), date.c_str());
-	// Description uses independent font
 	PopFont();
+	// Description uses independent font
 	PushFont(fonts->announcementDescriptionFont);
 	window->DrawList->AddText(pos + vec2(10, 45), h->CO(descriptionC), description.c_str());
 	PopFont();
 
-	// Back to status font for badge drawing/alignment
-	PushFont(fonts->announcementStatusFont);
-
-	float badgeHeight = GetFontSize() + 6; // 3px padding top/bottom
-	// Align badge to the vertical center of the title row
-	float badgeYPivot = 10 + (titleSize.y - badgeHeight) * 0.5f;
-	window->DrawList->AddRectFilled(
-		pos + vec2(10 + titleSize.x + 15, badgeYPivot),
-		pos + vec2(10 + titleSize.x + 15 + infoLabelSize.x + 20, badgeYPivot + badgeHeight),
-		h->CO(statusCol), 1000);
-	// Add subtle border around the badge
-	window->DrawList->AddRect(
-		pos + vec2(10 + titleSize.x + 15, badgeYPivot),
-		pos + vec2(10 + titleSize.x + 15 + infoLabelSize.x + 20, badgeYPivot + badgeHeight),
-		h->CO(colors::Gray2), 1000, 0, 1.0f);
-	// Draw bold text inside the badge for stronger emphasis
-	PushFont(fonts->announcementStatusFontBold);
-	window->DrawList->AddText(
-		pos + vec2(10 + titleSize.x + 15 + 10, badgeYPivot + (badgeHeight - GetFontSize()) / 2),
-		h->CO(colors::White), infoLabel.c_str());
-	PopFont();
-
-	PopFont();
 }
 
 
