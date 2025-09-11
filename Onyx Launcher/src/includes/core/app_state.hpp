@@ -23,10 +23,9 @@ struct AppState
 	bool authenticated = false;
 	std::vector<Api::LibraryProduct> ownedProducts;
 
-	// Discord linked state (from webapp)
+	// Discord linked state (kept minimal; avatar removed for now)
 	std::string discordId;
 	std::string discordUsername;
-	std::string discordAvatarHash;
 
 	// Async login states
 	std::atomic<int> loginState{ 0 }; // 0 idle, 1 loading, 2 success, 3 failure

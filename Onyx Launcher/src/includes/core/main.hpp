@@ -18,6 +18,7 @@
 #pragma comment(lib, "D3DX11.lib")
 #pragma comment(lib, "Shell32.lib")
 #pragma comment(lib, "Ws2_32.lib")
+#pragma comment(lib, "Urlmon.lib")
 
 #include <iostream>
 #include <winsock2.h>
@@ -27,6 +28,7 @@
 #include <shellapi.h>
 #include <d3d11.h>
 #include <D3DX11tex.h>
+#include <urlmon.h>
 #include <dwmapi.h>
 #include <map>
 #include <algorithm>

@@ -132,7 +132,8 @@ namespace Api
 				info.discordConnected = d.value("connected", false);
 				info.discordId = d.value<std::string>("id", "");
 				info.discordUsername = d.value<std::string>("username", "");
-				info.discordAvatar = d.value<std::string>("avatar", "");
+				// avatar loading removed for now
+				info.discordAvatar = "";
 			}
 			info.role = j.value<std::string>("role", "User");
 			return info;

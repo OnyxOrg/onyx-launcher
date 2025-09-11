@@ -119,7 +119,8 @@ namespace App
 			if (subalpha->tab == dashboard)
 			{
 				// Precompute welcome string so goto skip won't bypass initialization
-				std::string welcomeMsg = std::string("Welcome back, ") + (state.authenticated ? state.username : std::string("relique"));
+				std::string displayName = state.authenticated ? (state.discordUsername.empty() ? state.username : state.discordUsername) : std::string("relique");
+				std::string welcomeMsg = std::string("Welcome back, ") + displayName;
 				if (state.showPostLoginSpinner)
 				{
 					RenderLoadingOverlay();
@@ -215,7 +216,7 @@ SKIP_DASHBOARD_CONTENTS:;
 				PushStyleVar(ImGuiStyleVar_ItemSpacing, { 20, 20 });
 
 				SetCursorPos({ 190, 70 });
-				custom->BeginChild2("profile_showcase", { 300, 100 });
+				custom->BeginChild2("profile_showcase", { 325, 100 });
 				{
 					const auto& child = GetCurrentWindow();
 
@@ -224,7 +225,8 @@ SKIP_DASHBOARD_CONTENTS:;
 						vec2 avatarSize = { 60, 60 };
 						vec2 avatarPos = child->DC.CursorPos;
 						float rounding = avatarSize.y * 0.5f;
-						child->DrawList->AddImageRounded((ImTextureID)images->profilePic, avatarPos, avatarPos + avatarSize, {}, { 1, 1 }, h->CO(colors::White), rounding);
+						ID3D11ShaderResourceView* tex = images->profilePic;
+						child->DrawList->AddImageRounded((ImTextureID)tex, avatarPos, avatarPos + avatarSize, {}, { 1, 1 }, h->CO(colors::White), rounding);
 						child->DrawList->AddRect(avatarPos, avatarPos + avatarSize, h->CO(colors::Gray), rounding, 0, 1.0f);
 					}
 
@@ -258,7 +260,7 @@ SKIP_DASHBOARD_CONTENTS:;
 				custom->EndChild();
 
 				SetCursorPosX(190);
-				custom->BeginChild2("connect_discord", { 300, 165 });
+				custom->BeginChild2("connect_discord", { 325, 165 });
 				{
 					PushFont(fonts->InterS[0]);
 
@@ -291,7 +293,7 @@ SKIP_DASHBOARD_CONTENTS:;
 								{
 									state.discordId = ui.discordId;
 									state.discordUsername = ui.discordUsername;
-									state.discordAvatarHash = ui.discordAvatar;
+									// avatar loading removed
 									break;
 								}
 							}

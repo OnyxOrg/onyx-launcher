@@ -134,13 +134,12 @@ void Views::RenderLogin(AppState& state, Alpha& alpha, Alpha& subalpha)
 			alpha.index = home;
 			subalpha.index = dashboard;
 
-			// Refresh user info to pick up Discord link status after login
+			// Refresh user info to pick up Discord link status after login (no avatar)
 			Api::UserInfo ui = Api::GetUserInfo(state.username);
 			if (ui.ok)
 			{
 				state.discordId = ui.discordId;
 				state.discordUsername = ui.discordUsername;
-				state.discordAvatarHash = ui.discordAvatar;
 			}
 		}
 	}
