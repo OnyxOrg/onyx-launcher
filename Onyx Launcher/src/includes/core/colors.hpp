@@ -24,5 +24,13 @@ namespace colors
 	inline vec4 White = vec4(1, 1, 1, 1);
 	inline vec4 Transparent = vec4(0, 0, 0, 0);
 
+	// Legacy generic role tint
 	inline vec4 RoleMember = rgba(0x4d, 0x52, 0x60, 255);
+
+	// Web-app profile header role colors
+	inline vec4 RoleOwnerProfile   = rgba(0x64, 0x5a, 0xf0, 255); // #645af0
+	inline vec4 RoleDevProfile     = rgba(0x58, 0xc2, 0xa7, 255); // #58c2a7
+	inline vec4 RoleStaffProfile   = rgba(0xc3, 0x40, 0x3b, 255); // #c3403b
+	inline vec4 RoleManagerProfile = rgba(0x16, 0x67, 0x94, 255); // #166794
+	inline vec4 RoleUserProfile    = rgba(0x88, 0x88, 0x88, 255); // #888
 }

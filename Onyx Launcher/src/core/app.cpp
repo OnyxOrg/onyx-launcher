@@ -17,9 +17,12 @@ static std::string FormatRole(const std::string& role)
 }
 
 vec4 GetRoleColor(const std::string& role) {
-	// Currently all roles use RoleMember color; can differentiate later
-	(void)role;
-	return colors::RoleMember;
+	// Use profile header colors (web app) for the large profile badge
+	if (role == "owner") return colors::RoleOwnerProfile;
+	if (role == "developer") return colors::RoleDevProfile;
+	if (role == "manager") return colors::RoleManagerProfile;
+	if (role == "staff") return colors::RoleStaffProfile;
+	return colors::RoleUserProfile;
 }
 
 namespace App

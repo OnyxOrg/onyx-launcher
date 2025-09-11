@@ -41,7 +41,13 @@ bool Items::Profile(const std::string& name, const std::string& role, ID3D11Shad
 
 	// Role uses independent font and size
 	PushFont(fonts->userRoleFont);
-	window->DrawList->AddText(it.p + vec2(50, size.y * 0.5f + 2), h->CO(rolec), role.c_str());
+	// Choose sidebar role colors to match web app sidebar
+	vec4 rc = colors::RoleUserProfile;
+	if (_stricmp(role.c_str(), "Owner") == 0) rc = colors::RoleOwnerProfile;
+	else if (_stricmp(role.c_str(), "Developer") == 0) rc = colors::RoleDevProfile;
+	else if (_stricmp(role.c_str(), "Staff") == 0) rc = colors::RoleStaffProfile;
+	else if (_stricmp(role.c_str(), "Manager") == 0) rc = colors::RoleManagerProfile;
+	window->DrawList->AddText(it.p + vec2(50, size.y * 0.5f + 2), h->CO(rc), role.c_str());
 	PopFont();
 
 	if (hov)
