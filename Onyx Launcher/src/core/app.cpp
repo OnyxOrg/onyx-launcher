@@ -305,6 +305,9 @@ namespace App
 									{
 										state.discordId = ui.discordId;
 										state.discordUsername = ui.discordUsername;
+										// After link established, sync role immediately
+										auto sync = Api::SyncRole(state.username, state.discordId);
+										if (sync.ok && !sync.role.empty()) state.role = sync.role;
 										break;
 									}
 								}
