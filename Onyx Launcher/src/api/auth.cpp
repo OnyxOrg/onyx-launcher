@@ -157,6 +157,27 @@ namespace Api
 		}
 		catch (...) { return false; }
 	}
+
+	RoleSyncResult SyncRole(const std::string& username, const std::string& discordId)
+	{
+		RoleSyncResult out;
+		try
+		{
+			httplib::Client cli(ApiConfig::GetPrimaryBaseUrl().c_str());
+			cli.set_read_timeout(5, 0);
+			cli.set_write_timeout(5, 0);
+			nlohmann::json body;
+			if (!discordId.empty()) body["discordId"] = discordId;
+			else if (!username.empty()) body["username"] = username;
+			else return out;
+			auto res = cli.Post("/api/roles/sync", body.dump(), "application/json");
+			if (!res || res->status != 200) return out;
+			nlohmann::json j = nlohmann::json::parse(res->body, nullptr, false);
+			if (j.is_discarded()) return out;
+			out.ok = j.contains("role") && j["role"].is_string();
+			if (out.ok) out.role = j.value<std::string>("role", "user");
+			return out;
+		}
+		catch (...) { return out; }
+	}
 }
-
-

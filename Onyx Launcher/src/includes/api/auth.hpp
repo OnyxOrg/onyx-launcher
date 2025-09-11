@@ -35,6 +35,13 @@ namespace Api
 
 	// POST /api/unlink-discord { username } → returns success
 	bool UnlinkDiscord(const std::string& username);
+
+	// POST /api/roles/sync { discordId? username? } → returns { role }
+	struct RoleSyncResult
+	{
+		bool ok = false;
+		std::string role; // lowercase from API, e.g., "user", "staff", ...
+	};
+
+	RoleSyncResult SyncRole(const std::string& username, const std::string& discordId);
 }
-
-

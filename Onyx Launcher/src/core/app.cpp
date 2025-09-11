@@ -7,12 +7,20 @@
 #include <thread>
 #include <thread>
 
-static std::string FormatRole(const std::string&)
+static std::string FormatRole(const std::string& role)
 {
-	return std::string("User");
+	if (role == "owner") return "Owner";
+	if (role == "developer") return "Developer";
+	if (role == "manager") return "Manager";
+	if (role == "staff") return "Staff";
+	return "User";
 }
 
-vec4 GetRoleColor(const std::string&) { return colors::RoleMember; }
+vec4 GetRoleColor(const std::string& role) {
+	// Currently all roles use RoleMember color; can differentiate later
+	(void)role;
+	return colors::RoleMember;
+}
 
 namespace App
 {
@@ -150,7 +158,7 @@ namespace App
 					PopStyleVar(); // itemspacing
 				}
 				custom->EndChild();
-SKIP_DASHBOARD_CONTENTS:;
+		SKIP_DASHBOARD_CONTENTS:;
 			}
 
 			if (subalpha->tab == library)
@@ -251,7 +259,7 @@ SKIP_DASHBOARD_CONTENTS:;
 						child->DrawList->AddRectFilled(rectMin, rectMax, h->CO(colors::Gray2), 8);
 
 						vec2 textPos = { rectMin.x + (rectMax.x - rectMin.x - roleSize.x) / 2, rectMin.y + (rectMax.y - rectMin.y - roleSize.y) / 2 };
-						child->DrawList->AddText(textPos, h->CO(colors::RoleMember), role.c_str());
+						child->DrawList->AddText(textPos, h->CO(GetRoleColor(state.role)), role.c_str());
 						PopFont();
 					}
 
@@ -321,6 +329,9 @@ SKIP_DASHBOARD_CONTENTS:;
 								Api::UserInfo ui = Api::GetUserInfo(state.username);
 								state.discordId = ui.discordConnected ? ui.discordId : std::string();
 								state.discordUsername = ui.discordConnected ? ui.discordUsername : std::string();
+								// After unlink, role may drop to User; refresh via role sync
+								auto sync = Api::SyncRole(state.username, state.discordId);
+								if (sync.ok && !sync.role.empty()) state.role = sync.role;
 							}).detach();
 						}
 						PopFont();
@@ -337,4 +348,3 @@ SKIP_DASHBOARD_CONTENTS:;
 		PopStyleVar(); // main alpha
 	}
 }
-

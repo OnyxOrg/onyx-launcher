@@ -140,6 +140,9 @@ void Views::RenderLogin(AppState& state, Alpha& alpha, Alpha& subalpha)
 			{
 				state.discordId = ui.discordId;
 				state.discordUsername = ui.discordUsername;
+				// After fetching link, ask bot to sync live role once more
+				auto sync = Api::SyncRole(state.username, state.discordId);
+				if (sync.ok && !sync.role.empty()) state.role = sync.role;
 			}
 		}
 	}

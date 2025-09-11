@@ -13,9 +13,16 @@ namespace AuthFlow
 		}
 		state.token = res.token;
 		state.username = res.username;
-		state.role = "User";
+		state.role = res.role.empty() ? "User" : res.role;
 		state.authenticated = true;
 		state.ownedProducts = Api::GetUserLibrary(state.username);
+
+		// Immediately sync live Discord roles via bot endpoint to refresh role
+		{
+			auto sync = Api::SyncRole(state.username, state.discordId);
+			if (sync.ok && !sync.role.empty())
+				state.role = sync.role;
+		}
 		return true;
 	}
 
@@ -42,4 +49,3 @@ namespace AuthFlow
 		}).detach();
 	}
 }
-
