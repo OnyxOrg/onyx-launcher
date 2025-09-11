@@ -5,6 +5,9 @@
 
 // Simple fullscreen loading overlay with spinner
 void RenderLoadingOverlay();
+void RenderLoadingOverlay(const char* label);
+// Extended: allows fading out by multiplying final alpha in [0..1]
+void RenderLoadingOverlayEx(const char* label, float alphaMultiplier);
 
 // Returns true during frames when the loading overlay is being rendered
 bool IsOverlayActive();

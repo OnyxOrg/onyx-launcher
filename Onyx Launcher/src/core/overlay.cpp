@@ -4,6 +4,12 @@ static bool g_overlayActive = false;
 
 void RenderLoadingOverlay()
 {
+	RenderLoadingOverlay("Signing in...");
+}
+
+// Internal implementation with alpha control
+static void RenderLoadingOverlayInternal(const char* label, float alphaMultiplier)
+{
 	// Anchor overlay to the current window area
 	const auto& parent = GetCurrentWindow();
 	ImVec2 pos = parent->Pos;
@@ -29,6 +35,7 @@ void RenderLoadingOverlay()
 		s_fadeStartTime = now;
 	s_lastCallTime = now;
 	float fade = (float)std::min(1.0, (now - s_fadeStartTime) / (double)kFadeInSeconds);
+	fade *= ImClamp(alphaMultiplier, 0.0f, 1.0f);
 
 	// Dim background with fade
 	dl->AddRectFilled(winPos, winPos + winSize, h->CO({ 0, 0, 0, 0.75f * fade }));
@@ -45,10 +52,11 @@ void RenderLoadingOverlay()
 	dl->PathStroke(h->CO(stroke), 0, 3.0f);
 
 	// Label
-	vec2 ts = h->CT("Signing in...");
+	const char* text = (label && label[0] != '\0') ? label : "Signing in...";
+	vec2 ts = h->CT(text);
 	ImVec2 tpos = center + ImVec2(-ts.x * 0.5f, radius + 12);
 	vec4 txt = { colors::White.x, colors::White.y, colors::White.z, colors::White.w * fade };
-	dl->AddText(tpos, h->CO(txt), "Signing in...");
+	dl->AddText(tpos, h->CO(txt), text);
 
 	// Block interactions behind the overlay by capturing mouse input
 	SetCursorPos(ImVec2(0, 0));
@@ -58,6 +66,16 @@ void RenderLoadingOverlay()
 
 	// Mark overlay as active for this frame
 	g_overlayActive = true;
+}
+
+void RenderLoadingOverlay(const char* label)
+{
+	RenderLoadingOverlayInternal(label, 1.0f);
+}
+
+void RenderLoadingOverlayEx(const char* label, float alphaMultiplier)
+{
+	RenderLoadingOverlayInternal(label, alphaMultiplier);
 }
 
 bool IsOverlayActive()

@@ -30,6 +30,7 @@ struct AppState
 	// Async login states
 	std::atomic<int> loginState{ 0 }; // 0 idle, 1 loading, 2 success, 3 failure
 	bool isLoading = false;
+	bool isLinkingDiscord = false;
 	std::string loginError;
 	bool showPostLoginSpinner = false;
 	double postSpinnerEndTime = 0.0;

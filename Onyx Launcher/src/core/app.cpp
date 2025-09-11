@@ -7,6 +7,44 @@
 #include <thread>
 #include <thread>
 
+// Local fade-out state for Discord link success
+static std::atomic<bool> g_showLinkSuccessFade{ false };
+static double g_linkSuccessEndTime = 0.0;
+static constexpr float kLinkSuccessFadeSeconds = 0.6f;
+
+// Forward declare extended overlay API (header should also declare this)
+void RenderLoadingOverlayEx(const char* label, float alphaMultiplier);
+
+// Heuristic: detect if a browser window with the Discord OAuth title is open
+static bool IsDiscordAuthWindowOpen()
+{
+	struct Ctx { bool found = false; } ctx;
+	auto toLower = [](std::wstring s) {
+		std::transform(s.begin(), s.end(), s.begin(), [](wchar_t c){ return (wchar_t)std::tolower(c); });
+		return s;
+	};
+
+	EnumWindows([](HWND hwnd, LPARAM lp) -> BOOL {
+		Ctx* ctx = reinterpret_cast<Ctx*>(lp);
+		if (!IsWindowVisible(hwnd)) return TRUE;
+		int len = GetWindowTextLengthW(hwnd);
+		if (len <= 0) return TRUE;
+		std::wstring title; title.resize(static_cast<size_t>(len) + 1);
+		int got = GetWindowTextW(hwnd, &title[0], len + 1);
+		if (got <= 0) return TRUE;
+		title.resize(wcslen(title.c_str()));
+		std::wstring t = title;
+		std::transform(t.begin(), t.end(), t.begin(), [](wchar_t c){ return (wchar_t)std::tolower(c); });
+		bool looksLikeDiscordOAuth = (t.find(L"discord | authorize access") != std::wstring::npos)
+			|| (t.find(L"authorize access") != std::wstring::npos && t.find(L"discord") != std::wstring::npos)
+			|| (t.find(L"oauth2") != std::wstring::npos && t.find(L"discord") != std::wstring::npos);
+		if (looksLikeDiscordOAuth) { ctx->found = true; return FALSE; }
+		return TRUE;
+	}, reinterpret_cast<LPARAM>(&ctx));
+
+	return ctx.found;
+}
+
 static std::string FormatRole(const std::string& role)
 {
 	if (role == "owner") return "Owner";
@@ -134,7 +172,7 @@ namespace App
 				std::string welcomeMsg = std::string("Welcome back, ") + displayName;
 				if (state.showPostLoginSpinner)
 				{
-					RenderLoadingOverlay();
+					RenderLoadingOverlay("Signing in...");
 					if (ImGui::GetTime() >= state.postSpinnerEndTime)
 					{
 						state.showPostLoginSpinner = false;
@@ -144,6 +182,7 @@ namespace App
 						goto SKIP_DASHBOARD_CONTENTS;
 					}
 				}
+				// Note: Only show linking overlay in Profile tab per requirement
 				SetCursorPos({ 190, 33 });
 				custom->Banner("Dashboard", welcomeMsg.c_str(), images->banner);
 
@@ -291,6 +330,7 @@ namespace App
 						SetCursorPos({ 15, 115 });
 						if (items->ButtonIcon("Link Discord Account", DISCORD, { 195, 35 }))
 						{
+							state.isLinkingDiscord = true;
 							std::string authUrl = ApiConfig::BuildDiscordAuthorizeUrl(state.username);
 							std::wstring wurl(authUrl.begin(), authUrl.end());
 							std::thread([wurl] {
@@ -299,6 +339,7 @@ namespace App
 
 							// Poll for updated link state
 							std::thread([&state]() {
+								bool linked = false;
 								for (int i = 0; i < 20; ++i)
 								{
 									std::this_thread::sleep_for(std::chrono::milliseconds(500));
@@ -310,9 +351,26 @@ namespace App
 										// After link established, sync role immediately
 										auto sync = Api::SyncRole(state.username, state.discordId);
 										if (sync.ok && !sync.role.empty()) state.role = sync.role;
+										linked = true;
+										// Trigger a short success fade-out (local globals)
+										g_showLinkSuccessFade = true;
+										g_linkSuccessEndTime = ImGui::GetTime() + kLinkSuccessFadeSeconds;
 										break;
 									}
 								}
+								// If not linked, auto-close the overlay when the auth window is closed
+								if (!linked)
+								{
+									// Wait while browser auth window appears; when it disappears, stop the overlay
+									bool wasOpen = false;
+									for (int i = 0; i < 40; ++i)
+									{
+										std::this_thread::sleep_for(std::chrono::milliseconds(250));
+										if (IsDiscordAuthWindowOpen()) { wasOpen = true; }
+										else if (wasOpen) { break; }
+									}
+								}
+								state.isLinkingDiscord = false;
 							}).detach();
 						}
 						PopFont();
@@ -351,6 +409,25 @@ namespace App
 				custom->EndChild();
 
 				PopStyleVar(); // itemspacing
+			}
+
+
+			// Only in Profile tab: show linking overlay and success fade
+			if (subalpha->tab == profile)
+			{
+				if (state.isLinkingDiscord)
+				{
+					RenderLoadingOverlay("Linking Discord...");
+				}
+				else if (g_showLinkSuccessFade)
+				{
+					float remain = (float)(g_linkSuccessEndTime - ImGui::GetTime());
+					float a = remain <= 0.0f ? 0.0f : (remain / kLinkSuccessFadeSeconds);
+					if (a > 0.0f)
+						RenderLoadingOverlayEx("Linked!", a);
+					else
+						g_showLinkSuccessFade = false;
+				}
 			}
 
 			PopStyleVar(); // alpha
