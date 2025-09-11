@@ -163,4 +163,62 @@ bool Items::ButtonIcon(const std::string& label, const std::string& icon, const 
 	return r;
 }
 
+namespace dangerbutton
+{
+    vec4 bg = rgba(227, 72, 80);     // red
+    vec4 bgAct = rgba(192, 52, 58);  // darker red
+
+    vec4 textC = colors::White;
+    vec4 textAct = colors::White;
+
+    float rounding = 7;
+}
+
+bool Items::ButtonDangerIcon(const std::string& label, const std::string& icon, const vec2& size)
+{
+    ImGuiWindow* window = GetCurrentWindow();
+    using namespace dangerbutton;
+
+    vec2 lSize(h->CT(label.c_str()));
+    vec2 pos = window->DC.CursorPos;
+
+    PushFont(fonts->Icons[4]);
+    vec2 iSize = h->CT(icon);
+    PopFont();
+
+    static std::map<std::string, Buttons> anim;
+
+    bool r = InvisibleButton(label.c_str(), size);
+    bool act(IsItemActive()); bool hov(IsItemHovered());
+
+    vec4 bgcol = hov ? bgAct : bg;
+    vec4 textcol = hov ? textAct : textC;
+
+    if (hov)
+        SetMouseCursor(ImGuiMouseCursor_Hand);
+
+    Buttons& w = anim.emplace(label, Buttons(bgcol, textcol)).first->second;
+
+    w.time = gui->xtime(gui->GlobalSpeed);
+    w.bgcol = ImLerp(w.bgcol, bgcol, w.time);
+    w.textcol = ImLerp(w.textcol, textcol, w.time);
+
+    window->DrawList->AddRectFilled(pos, pos + size, h->CO(w.bgcol), rounding);
+
+    vec2 combinedSize = lSize + iSize;
+    float padding = 2;
+
+    window->DrawList->AddText(pos + (size - vec2(combinedSize.x, lSize.y)) / 2 + vec2(iSize.x + padding, 0), h->CO(w.textcol), label.c_str());
+
+    PushFont(fonts->Icons[4]);
+    window->DrawList->AddText(
+        pos + (size - vec2(combinedSize.x, iSize.y)) / 2 - vec2(padding, -1),
+        h->CO(w.textcol),
+        icon.c_str()
+    );
+    PopFont();
+
+    return r;
+}
+
 

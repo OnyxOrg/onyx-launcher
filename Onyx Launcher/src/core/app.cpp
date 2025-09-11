@@ -262,45 +262,69 @@ SKIP_DASHBOARD_CONTENTS:;
 				SetCursorPosX(190);
 				custom->BeginChild2("connect_discord", { 325, 165 });
 				{
-					PushFont(fonts->InterS[0]);
-
-					SetCursorPos({ 15, 15 });
-					draw->Text("Connect to Discord", colors::White);
-
-					PopFont();
-
-					PushFont(fonts->InterM[2]);
-
-					SetCursorPos({ 15, 40 });
-					draw->Text("Log in with your Discord Account to \nunlock your full profile: avatar, UID,\nregistration date, and more.", colors::Lwhite2);
-
-					SetCursorPos({ 15, 115 });
-					if (items->ButtonIcon("Link Discord Account", DISCORD, { 195, 35 }))
+					if (state.discordId.empty())
 					{
-						std::string authUrl = ApiConfig::BuildDiscordAuthorizeUrl(state.username);
-						std::wstring wurl(authUrl.begin(), authUrl.end());
-						std::thread([wurl] {
-							ShellExecuteW(nullptr, L"open", wurl.c_str(), nullptr, nullptr, SW_SHOWNORMAL);
-						}).detach();
+						PushFont(fonts->InterS[0]);
+						SetCursorPos({ 15, 15 });
+						draw->Text("Connect to Discord", colors::White);
+						PopFont();
 
-						// Poll the bot for updated Discord link and refresh state
-						std::thread([&state]() {
-							for (int i = 0; i < 20; ++i)
-							{
-								std::this_thread::sleep_for(std::chrono::milliseconds(500));
-								Api::UserInfo ui = Api::GetUserInfo(state.username);
-								if (ui.ok && ui.discordConnected && !ui.discordId.empty())
+						PushFont(fonts->InterM[2]);
+						SetCursorPos({ 15, 40 });
+						draw->Text("Log in with your Discord Account to \nunlock your full profile: avatar, UID,\nregistration date, and more.", colors::Lwhite2);
+						SetCursorPos({ 15, 115 });
+						if (items->ButtonIcon("Link Discord Account", DISCORD, { 195, 35 }))
+						{
+							std::string authUrl = ApiConfig::BuildDiscordAuthorizeUrl(state.username);
+							std::wstring wurl(authUrl.begin(), authUrl.end());
+							std::thread([wurl] {
+								ShellExecuteW(nullptr, L"open", wurl.c_str(), nullptr, nullptr, SW_SHOWNORMAL);
+							}).detach();
+
+							// Poll for updated link state
+							std::thread([&state]() {
+								for (int i = 0; i < 20; ++i)
 								{
-									state.discordId = ui.discordId;
-									state.discordUsername = ui.discordUsername;
-									// avatar loading removed
-									break;
+									std::this_thread::sleep_for(std::chrono::milliseconds(500));
+									Api::UserInfo ui = Api::GetUserInfo(state.username);
+									if (ui.ok && ui.discordConnected && !ui.discordId.empty())
+									{
+										state.discordId = ui.discordId;
+										state.discordUsername = ui.discordUsername;
+										break;
+									}
 								}
-							}
-						}).detach();
+							}).detach();
+						}
+						PopFont();
 					}
+					else
+					{
+						PushFont(fonts->InterS[0]);
+						SetCursorPos({ 15, 15 });
+						draw->Text("Discord Linked", colors::White);
+						PopFont();
 
-					PopFont();
+						PushFont(fonts->InterM[2]);
+						SetCursorPos({ 15, 40 });
+						draw->Text("Your Discord account is currently", colors::Lwhite2);
+						SetCursorPos({ 15, 58 });
+						draw->Text("connected to Onyx.", colors::Lwhite2);
+						SetCursorPos({ 15, 76 });
+						draw->Text("You can unlink at any time.", colors::Lwhite2);
+						SetCursorPos({ 15, 115 });
+						if (items->ButtonDangerIcon("Unlink Discord Account", DISCORD, { 230, 35 }))
+						{
+							std::thread([&state]() {
+								Api::UnlinkDiscord(state.username);
+								// Refresh local state
+								Api::UserInfo ui = Api::GetUserInfo(state.username);
+								state.discordId = ui.discordConnected ? ui.discordId : std::string();
+								state.discordUsername = ui.discordConnected ? ui.discordUsername : std::string();
+							}).detach();
+						}
+						PopFont();
+					}
 				}
 				custom->EndChild();
 

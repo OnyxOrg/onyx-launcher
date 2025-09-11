@@ -143,6 +143,20 @@ namespace Api
 			return info;
 		}
 	}
+
+	bool UnlinkDiscord(const std::string& username)
+	{
+		try
+		{
+			httplib::Client cli(ApiConfig::GetPrimaryBaseUrl().c_str());
+			cli.set_read_timeout(5, 0);
+			cli.set_write_timeout(5, 0);
+			nlohmann::json body; body["username"] = username;
+			auto res = cli.Post("/api/unlink-discord", body.dump(), "application/json");
+			return res && res->status == 200;
+		}
+		catch (...) { return false; }
+	}
 }
 
 

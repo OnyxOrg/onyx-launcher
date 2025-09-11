@@ -32,6 +32,9 @@ namespace Api
 	};
 
 	UserInfo GetUserInfo(const std::string& username);
+
+	// POST /api/unlink-discord { username } → returns success
+	bool UnlinkDiscord(const std::string& username);
 }
 
 
