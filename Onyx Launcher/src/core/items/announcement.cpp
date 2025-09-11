@@ -19,9 +19,6 @@ void Items::Announcement(const std::string& title, const std::string& descriptio
 	vec2 pos = window->DC.CursorPos;
 	vec2 size = { window->Size.x - GetCursorPosX() * 2, 135 }; // if its not used in child change X size to 580 :<
 
-	// Status parameter kept for API compatibility, but not used anymore
-	(void)status;
-
 	// Labels removed: no status badge rendering
 
 	ItemSize(size);
@@ -31,6 +28,8 @@ void Items::Announcement(const std::string& title, const std::string& descriptio
 
 	window->DrawList->AddRectFilled(pos, pos + size, h->CO(bg), rounding);
 	window->DrawList->AddRect(pos, pos + size, h->CO(border), rounding);
+
+    // No status bar on the left; clean card
 
 	// Title font remains the same
 	PushFont(fonts->InterS[0]);
