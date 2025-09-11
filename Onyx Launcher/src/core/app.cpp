@@ -10,7 +10,10 @@
 // Local fade-out state for Discord link success
 static std::atomic<bool> g_showLinkSuccessFade{ false };
 static double g_linkSuccessEndTime = 0.0;
-static constexpr float kLinkSuccessFadeSeconds = 0.6f;
+static constexpr float kLinkSuccessFadeSeconds = 1.5f;
+static std::atomic<bool> g_showCancelFade{ false };
+static double g_cancelFadeEndTime = 0.0;
+static constexpr float kLinkCancelFadeSeconds = 1.5f;
 
 // Forward declare extended overlay API (header should also declare this)
 void RenderLoadingOverlayEx(const char* label, float alphaMultiplier);
@@ -344,7 +347,12 @@ namespace App
 									if (g_showLinkSuccessFade) break; // already succeeded
 									bool open = IsDiscordAuthWindowOpen();
 									if (open) sawWindow = true;
-									if (sawWindow && !open) { state.isLinkingDiscord = false; break; }
+									if (sawWindow && !open) { 
+										g_showCancelFade = true; 
+										g_cancelFadeEndTime = ImGui::GetTime() + kLinkCancelFadeSeconds; 
+										state.isLinkingDiscord = false; 
+										break; 
+									}
 									std::this_thread::sleep_for(std::chrono::milliseconds(120));
 								}
 							}).detach();
@@ -366,6 +374,7 @@ namespace App
 										g_showLinkSuccessFade = true;
 										g_linkSuccessEndTime = ImGui::GetTime() + kLinkSuccessFadeSeconds;
 										state.isLinkingDiscord = false;
+										g_showCancelFade = false; // cancel any pending cancel-fade
 										break;
 									}
 									if (!state.isLinkingDiscord) break; // watcher closed it
@@ -411,7 +420,7 @@ namespace App
 			}
 
 
-			// Only in Profile tab: show linking overlay and success fade
+			// Only in Profile tab: show linking overlay and fades
 			if (subalpha->tab == profile)
 			{
 				if (state.isLinkingDiscord)
@@ -426,6 +435,15 @@ namespace App
 						RenderLoadingOverlayEx("Linked!", a);
 					else
 						g_showLinkSuccessFade = false;
+				}
+				else if (g_showCancelFade)
+				{
+					float remain = (float)(g_cancelFadeEndTime - ImGui::GetTime());
+					float a = remain <= 0.0f ? 0.0f : (remain / kLinkCancelFadeSeconds);
+					if (a > 0.0f)
+						RenderLoadingOverlayEx("Cancelled", a);
+					else
+						g_showCancelFade = false;
 				}
 			}
 
