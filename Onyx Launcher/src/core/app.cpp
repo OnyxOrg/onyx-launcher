@@ -390,14 +390,12 @@ namespace App
 						draw->Text("Discord Linked", colors::White);
 						PopFont();
 
-						PushFont(fonts->InterM[2]);
+						PushFont(fonts->InterM[1]);
 						SetCursorPos({ 15, 40 });
-						draw->Text("Your Discord account is currently", colors::Lwhite2);
+						draw->Text("Your Discord account is currently connected", colors::Lwhite2);
 						SetCursorPos({ 15, 58 });
-						draw->Text("connected to Onyx.", colors::Lwhite2);
-						SetCursorPos({ 15, 76 });
-						draw->Text("You can unlink at any time.", colors::Lwhite2);
-						SetCursorPos({ 15, 115 });
+						draw->Text("to Onyx. You can unlink at any time.", colors::Lwhite2);
+						SetCursorPos({ 15, 110 });
 						if (items->ButtonDangerIcon("Unlink Discord Account", DISCORD, { 230, 35 }))
 						{
 							std::thread([&state]() {
