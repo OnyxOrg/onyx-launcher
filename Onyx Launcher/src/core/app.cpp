@@ -337,12 +337,23 @@ namespace App
 								ShellExecuteW(nullptr, L"open", wurl.c_str(), nullptr, nullptr, SW_SHOWNORMAL);
 							}).detach();
 
-							// Poll for updated link state
+							// Start a watcher that closes overlay as soon as the auth window is closed
 							std::thread([&state]() {
-								bool linked = false;
-								for (int i = 0; i < 20; ++i)
+								bool sawWindow = false;
+								for (;;) {
+									if (g_showLinkSuccessFade) break; // already succeeded
+									bool open = IsDiscordAuthWindowOpen();
+									if (open) sawWindow = true;
+									if (sawWindow && !open) { state.isLinkingDiscord = false; break; }
+									std::this_thread::sleep_for(std::chrono::milliseconds(120));
+								}
+							}).detach();
+
+							// Poll for updated link state (faster interval) and stop immediately on success or watcher close
+							std::thread([&state]() {
+								for (int i = 0; i < 40; ++i)
 								{
-									std::this_thread::sleep_for(std::chrono::milliseconds(500));
+									std::this_thread::sleep_for(std::chrono::milliseconds(250));
 									Api::UserInfo ui = Api::GetUserInfo(state.username);
 									if (ui.ok && ui.discordConnected && !ui.discordId.empty())
 									{
@@ -351,26 +362,14 @@ namespace App
 										// After link established, sync role immediately
 										auto sync = Api::SyncRole(state.username, state.discordId);
 										if (sync.ok && !sync.role.empty()) state.role = sync.role;
-										linked = true;
 										// Trigger a short success fade-out (local globals)
 										g_showLinkSuccessFade = true;
 										g_linkSuccessEndTime = ImGui::GetTime() + kLinkSuccessFadeSeconds;
+										state.isLinkingDiscord = false;
 										break;
 									}
+									if (!state.isLinkingDiscord) break; // watcher closed it
 								}
-								// If not linked, auto-close the overlay when the auth window is closed
-								if (!linked)
-								{
-									// Wait while browser auth window appears; when it disappears, stop the overlay
-									bool wasOpen = false;
-									for (int i = 0; i < 40; ++i)
-									{
-										std::this_thread::sleep_for(std::chrono::milliseconds(250));
-										if (IsDiscordAuthWindowOpen()) { wasOpen = true; }
-										else if (wasOpen) { break; }
-									}
-								}
-								state.isLinkingDiscord = false;
 							}).detach();
 						}
 						PopFont();
