@@ -1,4 +1,5 @@
 #include "includes/core/items/custom.hpp"
+#include "includes/core/overlay.hpp"
 
 namespace checkboxcol {
 
@@ -35,14 +36,15 @@ bool Items::Checkbox(const std::string& label, bool* v)
 	bool r = InvisibleButton(label.c_str(), size);
 	bool act(*v); bool hov = IsItemHovered();
 	bool chov = IsMouseHoveringRect(pos + vec2(size.x - csize.x, 0), pos + vec2(size.x, csize.y));
+	bool overlayBlocks = IsOverlayActive();
 
-	if (r && chov) *v = !*v;
+	if (!overlayBlocks && r && chov) *v = !*v;
 
-	if (chov)
+	if (chov && !overlayBlocks)
 		SetMouseCursor(ImGuiMouseCursor_Hand);
 
 	vec4 textcol = act ? textAct : textC;
-	vec4 bgcol = act ? bgAct : bg;
+	vec4 bgcol = act ? bgAct : (overlayBlocks ? bg : (hov ? bgHov : bg));
 	vec4 circlecol = act ? circleAct : circle;
 	vec4 bordercol = act ? colors::Transparent : border;
 	float x = act ? /*pos.x + */size.x - 8 : /*pos.x + */size.x - csize.x + 8;
