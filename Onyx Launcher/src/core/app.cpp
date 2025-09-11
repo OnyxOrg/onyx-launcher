@@ -227,7 +227,7 @@ namespace App
 				PushStyleVar(ImGuiStyleVar_ItemSpacing, { 20, 20 });
 
 				SetCursorPos({ 190, 70 });
-				custom->BeginChild2("profile_showcase", { 325, 100 });
+				custom->BeginChild2("profile_showcase", { 330, 100 });
 				{
 					const auto& child = GetCurrentWindow();
 
@@ -254,6 +254,8 @@ namespace App
 					{
 						// If not linked to Discord, always show "User" (even if DB stores a higher role)
 						std::string role = (!state.authenticated || state.discordId.empty()) ? std::string("User") : FormatRole(state.role);
+						// In profile section, shorten Developer -> Dev
+						if (role == "Developer") role = "Dev";
 						PushFont(fonts->profileRoleFont);
 						vec2 roleSize = h->CT(role);
 
@@ -274,7 +276,7 @@ namespace App
 				custom->EndChild();
 
 				SetCursorPosX(190);
-				custom->BeginChild2("connect_discord", { 325, 165 });
+				custom->BeginChild2("connect_discord", { 330, 165 });
 				{
 					if (state.discordId.empty())
 					{
