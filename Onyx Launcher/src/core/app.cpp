@@ -141,10 +141,10 @@ namespace App
 				{
 					PushStyleVarY(ImGuiStyleVar_ItemSpacing, 12);
 
-					items->Announcement("ONYX UPDATE 1.0", "Lorem ipsum dolor sit amet consectetur adipisicing elit. Possimus, perferendis\nipsum? Itaque, ea harum. Aliquam libero animi maxime ab, sapiente beatae maiores\nobcaecati quae. Modi officiis dolore delectus ullam rem?", "August 6, 2025", feature);
-					items->Announcement("ONYX UPDATE 0.4", "Lorem ipsum dolor sit amet consectetur adipisicing elit. Possimus, perferendis\nipsum? Itaque, ea harum. Aliquam libero animi maxime ab, sapiente beatae maiores\nobcaecati quae. Modi officiis dolore delectus ullam rem?", "August 6, 2025", updated);
-					items->Announcement("ONYX UPDATE 0.1", "Lorem ipsum dolor sit amet consectetur adipisicing elit. Possimus, perferendis\nipsum? Itaque, ea harum. Aliquam libero animi maxime ab, sapiente beatae maiores\nobcaecati quae. Modi officiis dolore delectus ullam rem?", "August 6, 2025", bugfix);
-					items->Announcement("ONYX UPDATE 0.3", "Lorem ipsum dolor sit amet consectetur adipisicing elit. Possimus, perferendis\nipsum? Itaque, ea harum. Aliquam libero animi maxime ab, sapiente beatae maiores\nobcaecati quae. Modi officiis dolore delectus ullam rem?", "August 6, 2025", bugfix);
+					items->Announcement("ONYX UPDATE 1.0", "Highlights: new dashboard, faster authentication, library auto-updates,\nperformance improvements, stability fixes, and a refreshed look.", "August 6, 2025", feature);
+					items->Announcement("ONYX UPDATE 0.4", "Improvements: account linking, refined installer, reduced CPU usage,\nfixed crashes when switching tabs and clearer error messages.", "August 6, 2025", updated);
+					items->Announcement("ONYX UPDATE 0.1", "Bug fixes: resolved login timeouts, license sync issues and UI clipping,\nmore reliable updater and a smoother first-run experience.", "August 6, 2025", bugfix);
+					items->Announcement("ONYX UPDATE 0.3", "Maintenance: patched overlay memory leak, corrected theme colors,\nfixed broken dashboard links and minor layout glitches.", "August 6, 2025", bugfix);
 					
 					Spacing();
 					PopStyleVar(); // itemspacing
