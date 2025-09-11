@@ -4,6 +4,7 @@
 void Views::RenderLogin(AppState& state, Alpha& alpha, Alpha& subalpha)
 {
 	const auto& window = GetCurrentWindow();
+	if (state.isLoading || state.showPostLoginSpinner) SetOverlayActive(true);
 
 	if (strlen(state.loginErrMsg) > 0)
 	{

@@ -1,4 +1,5 @@
 #include "includes/core/items/custom.hpp"
+#include "includes/core/overlay.hpp"
 
 // Error state per input name
 static std::map<std::string, bool> g_inputError;
@@ -84,12 +85,13 @@ bool Items::Input(const std::string& name, const std::string& iconA, const std::
 	window->DrawList->AddText(pos + vec2(GetStyle().FramePadding.x, (GetFrameHeight() - nameSize.y) / 2), h->CO(w.text), name.c_str());
 
 	PushFont(fonts->Icons[1]);
-	bool changeIconCond = hovCond && IsMouseClicked(0) && (flags & ImGuiInputTextFlags_Password);
+	bool overlayBlocks = IsOverlayActive();
+	bool changeIconCond = hovCond && !overlayBlocks && IsMouseClicked(0) && (flags & ImGuiInputTextFlags_Password);
 
 	if (changeIconCond)
 		w.changeIcon = !w.changeIcon;
 
-	if (hovCond && (flags & ImGuiInputTextFlags_Password))
+	if (hovCond && (flags & ImGuiInputTextFlags_Password) && !overlayBlocks)
 		SetMouseCursor(ImGuiMouseCursor_Hand);
 
 	w.currentIcon = w.changeIcon ? iconB : iconA;

@@ -2,6 +2,7 @@
 #include "includes/core/auth_flow.hpp"
 #include "includes/core/views/login_view.hpp"
 #include "includes/core/views/register_view.hpp"
+#include "includes/core/overlay.hpp"
 #include <thread>
 #include <thread>
 
@@ -17,6 +18,7 @@ namespace App
 	void RenderFrame(AppState& state)
 	{
 		const auto& window = GetCurrentWindow();
+		SetOverlayActive(false);
 
 		const static auto& alpha = std::make_unique<Alpha>(); alpha->Render();
 		const static auto& subalpha = std::make_unique<Alpha>(); subalpha->Render();

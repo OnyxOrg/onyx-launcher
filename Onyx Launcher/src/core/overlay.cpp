@@ -1,5 +1,7 @@
 #include "includes/core/overlay.hpp"
 
+static bool g_overlayActive = false;
+
 void RenderLoadingOverlay()
 {
 	// Anchor overlay to the current window area
@@ -53,4 +55,23 @@ void RenderLoadingOverlay()
 	InvisibleButton("##overlay_blocker", winSize);
 
 	End();
+
+	// Mark overlay as active for this frame
+	g_overlayActive = true;
+}
+
+bool IsOverlayActive()
+{
+	return g_overlayActive;
+}
+
+void SetOverlayActive(bool active)
+{
+	g_overlayActive = active;
+}
+
+bool IsOverlayDragging()
+{
+	// Not implemented; keep for API compatibility if needed later
+	return false;
 }

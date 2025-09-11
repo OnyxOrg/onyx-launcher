@@ -12,4 +12,7 @@ bool IsOverlayActive();
 // Query whether overlay is currently dragging the native window
 bool IsOverlayDragging();
 
+// Explicitly set overlay active state for the current frame
+void SetOverlayActive(bool active);
+
 
