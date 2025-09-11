@@ -70,7 +70,7 @@ bool Items::Input(const std::string& name, const std::string& iconA, const std::
 	bool hovCond = IsMouseHoveringRect(pos + vec2(size.x - (12 * 2) - h->CT(w.currentIcon).x, 0), pos + vec2(size.x, GetFrameHeight()));
 
 	vec4 textcol = act || strlen(buf) > 0 ? colors::Transparent : textC;
-	vec4 iconcol = (hovCond && (flags & ImGuiInputTextFlags_Password)) || act ? iconAct : iconC;
+	vec4 iconcol = ((hovCond && !IsOverlayActive() && (flags & ImGuiInputTextFlags_Password)) || act) ? iconAct : iconC;
 	vec4 bgcol = act ? bgAct : bg;
 	vec4 shadowcol = act ? shadowAct : shadowC;
 
