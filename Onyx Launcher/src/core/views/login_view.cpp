@@ -151,6 +151,10 @@ void Views::RenderLogin(AppState& state, Alpha& alpha, Alpha& subalpha)
 						if (srv) state.avatarTexture = srv;
 					}).detach();
 				}
+				else
+				{
+					if (state.avatarTexture) { state.avatarTexture->Release(); state.avatarTexture = nullptr; }
+				}
 				// After fetching link, ask bot to sync live role once more
 				auto sync = Api::SyncRole(state.username, state.discordId);
 				if (sync.ok && !sync.role.empty()) state.role = sync.role;

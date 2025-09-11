@@ -409,12 +409,18 @@ namespace App
 						SetCursorPos({ 15, 110 });
 						if (items->ButtonDangerIcon("Unlink Discord Account", DISCORD, { 230, 35 }))
 						{
+							// Immediately clear avatar locally so UI falls back to placeholder
+							if (state.avatarTexture) { state.avatarTexture->Release(); state.avatarTexture = nullptr; }
+							state.discordAvatarHash.clear();
 							std::thread([&state]() {
 								Api::UnlinkDiscord(state.username);
 								// Refresh local state
 								Api::UserInfo ui = Api::GetUserInfo(state.username);
 								state.discordId = ui.discordConnected ? ui.discordId : std::string();
 								state.discordUsername = ui.discordConnected ? ui.discordUsername : std::string();
+								// Ensure avatar stays cleared after unlink
+								state.discordAvatarHash.clear();
+								if (state.avatarTexture) { state.avatarTexture->Release(); state.avatarTexture = nullptr; }
 								// After unlink, role may drop to User; refresh via role sync
 								auto sync = Api::SyncRole(state.username, state.discordId);
 								if (sync.ok && !sync.role.empty()) state.role = sync.role;
