@@ -175,6 +175,7 @@ void Views::RenderLogin(AppState& state, Alpha& alpha, Alpha& subalpha)
 				state.discordId = ui.discordId;
 				state.discordUsername = ui.discordUsername;
 				state.discordAvatarHash = ui.discordAvatar;
+				state.createdVia = ui.createdVia;
 				if (!state.discordId.empty() && !state.discordAvatarHash.empty())
 				{
 					std::string url = ApiConfig::BuildDiscordAvatarUrl(state.discordId, state.discordAvatarHash, 128);

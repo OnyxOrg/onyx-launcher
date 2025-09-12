@@ -374,6 +374,7 @@ namespace App
 										state.discordId = ui.discordId;
 										state.discordUsername = ui.discordUsername;
 										state.discordAvatarHash = ui.discordAvatar;
+										state.createdVia = ui.createdVia;
 										if (!state.discordId.empty() && !state.discordAvatarHash.empty())
 										{
 											std::string url = ApiConfig::BuildDiscordAvatarUrl(state.discordId, state.discordAvatarHash, 128);
@@ -413,22 +414,26 @@ namespace App
 						SetCursorPos({ 15, 110 });
 						if (items->ButtonDangerIcon("Unlink Discord Account", DISCORD, { 230, 35 }))
 						{
-							// Immediately clear avatar locally so UI falls back to placeholder
-							if (state.avatarTexture) { state.avatarTexture->Release(); state.avatarTexture = nullptr; }
-							state.discordAvatarHash.clear();
-							std::thread([&state]() {
-								Api::UnlinkDiscord(state.username);
-								// Refresh local state
-								Api::UserInfo ui = Api::GetUserInfo(state.username);
-								state.discordId = ui.discordConnected ? ui.discordId : std::string();
-								state.discordUsername = ui.discordConnected ? ui.discordUsername : std::string();
-								// Ensure avatar stays cleared after unlink
-								state.discordAvatarHash.clear();
+							if (state.createdVia == "discord")
+							{
+								state.showUnlinkPasswordModal = true;
+								ZeroMemory(state.unlinkPassBuf, sizeof(state.unlinkPassBuf));
+							}
+							else
+							{
 								if (state.avatarTexture) { state.avatarTexture->Release(); state.avatarTexture = nullptr; }
-								// After unlink, role may drop to User; refresh via role sync
-								auto sync = Api::SyncRole(state.username, state.discordId);
-								if (sync.ok && !sync.role.empty()) state.role = sync.role;
-							}).detach();
+								state.discordAvatarHash.clear();
+								std::thread([&state]() {
+									Api::UnlinkDiscord(state.username);
+									Api::UserInfo ui = Api::GetUserInfo(state.username);
+									state.discordId = ui.discordConnected ? ui.discordId : std::string();
+									state.discordUsername = ui.discordConnected ? ui.discordUsername : std::string();
+									state.discordAvatarHash.clear();
+									if (state.avatarTexture) { state.avatarTexture->Release(); state.avatarTexture = nullptr; }
+									auto sync = Api::SyncRole(state.username, state.discordId);
+									if (sync.ok && !sync.role.empty()) state.role = sync.role;
+								}).detach();
+							}
 						}
 						PopFont();
 					}
@@ -442,6 +447,43 @@ namespace App
 			// Only in Profile tab: show linking overlay and fades
 			if (subalpha->tab == profile)
 			{
+				// If the account was created via Discord and user requested unlink, ask for new password
+				if (state.showUnlinkPasswordModal)
+				{
+					ImGui::OpenPopup("Set Password to Unlink");
+					if (ImGui::BeginPopupModal("Set Password to Unlink", nullptr, ImGuiWindowFlags_AlwaysAutoResize))
+					{
+						PushFont(fonts->InterM[1]);
+						ImGui::Text("To unlink, set a new password for your Onyx account.");
+						PopFont();
+						ImGui::Spacing();
+						ImGui::InputText("New password", state.unlinkPassBuf, _size(state.unlinkPassBuf), ImGuiInputTextFlags_Password);
+						ImGui::Spacing();
+						if (ImGui::Button("Unlink", { 120, 30 }))
+						{
+							std::string pass(state.unlinkPassBuf);
+							std::thread([&state, pass]() {
+								Api::UnlinkDiscord(state.username, pass);
+								Api::UserInfo ui = Api::GetUserInfo(state.username);
+								state.discordId = ui.discordConnected ? ui.discordId : std::string();
+								state.discordUsername = ui.discordConnected ? ui.discordUsername : std::string();
+								state.discordAvatarHash.clear();
+								if (state.avatarTexture) { state.avatarTexture->Release(); state.avatarTexture = nullptr; }
+								auto sync = Api::SyncRole(state.username, state.discordId);
+								if (sync.ok && !sync.role.empty()) state.role = sync.role;
+							}).detach();
+							state.showUnlinkPasswordModal = false;
+							ImGui::CloseCurrentPopup();
+						}
+						ImGui::SameLine();
+						if (ImGui::Button("Cancel", { 120, 30 }))
+						{
+							state.showUnlinkPasswordModal = false;
+							ImGui::CloseCurrentPopup();
+						}
+						ImGui::EndPopup();
+					}
+				}
 				// Stamp the start time on UI thread when we first see pending-cancel
 				if (g_pendingCancel && g_pendingCancelStartTime <= 0.0)
 				{

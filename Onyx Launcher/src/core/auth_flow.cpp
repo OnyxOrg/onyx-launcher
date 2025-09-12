@@ -38,9 +38,9 @@ namespace AuthFlow
 			if (ok)
 			{
 				state.loginState = 2;
-				// Try to prefetch discord link info (username + id only)
+				// Prefetch discord link info (including createdVia)
 				auto ui = Api::GetUserInfo(state.username);
-				if (ui.ok) { state.discordId = ui.discordId; state.discordUsername = ui.discordUsername; }
+				if (ui.ok) { state.discordId = ui.discordId; state.discordUsername = ui.discordUsername; state.createdVia = ui.createdVia; }
 			}
 			else
 			{

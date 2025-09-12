@@ -32,6 +32,7 @@ namespace Api
 				info.discordAvatar = d.value<std::string>("avatar", "");
 			}
 			info.role = j.value<std::string>("role", "User");
+			info.createdVia = j.value<std::string>("createdVia", "manual");
 			return info;
 		}
 		catch (...)
@@ -40,11 +41,11 @@ namespace Api
 		}
 	}
 
-	bool UnlinkDiscord(const std::string& username)
+	bool UnlinkDiscord(const std::string& username, const std::string& newPassword)
 	{
 		try
 		{
-			nlohmann::json body; body["username"] = username;
+			nlohmann::json body; body["username"] = username; if (!newPassword.empty()) body["newPassword"] = newPassword;
 			httplib::Client cli(ApiConfig::GetPrimaryBaseUrl().c_str());
 			cli.set_connection_timeout(2, 0);
 			cli.set_read_timeout(5, 0);

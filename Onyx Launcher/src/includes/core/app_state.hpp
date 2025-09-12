@@ -28,11 +28,14 @@ struct AppState
 	std::string discordUsername;
 	std::string discordAvatarHash; // hash only
 	ID3D11ShaderResourceView* avatarTexture = nullptr; // created from CDN when available
+	std::string createdVia; // 'manual', 'discord', 'launcher', 'web app'
 
 	// Async login states
 	std::atomic<int> loginState{ 0 }; // 0 idle, 1 loading, 2 success, 3 failure
 	bool isLoading = false;
 	bool isLinkingDiscord = false;
+	bool showUnlinkPasswordModal = false;
+	char unlinkPassBuf[42] = {0};
 	std::string loginError;
 	bool showPostLoginSpinner = false;
 	double postSpinnerEndTime = 0.0;

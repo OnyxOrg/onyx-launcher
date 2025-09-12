@@ -15,12 +15,13 @@ namespace Api
 		std::string discordAvatar; // hash only
 		bool discordConnected = false;
 		std::string role;
+		std::string createdVia;
 	};
 
 	UserInfo GetUserInfo(const std::string& username);
 
 	// POST /api/unlink-discord { username } → returns success
-	bool UnlinkDiscord(const std::string& username);
+	bool UnlinkDiscord(const std::string& username, const std::string& newPassword = std::string());
 
 	// POST /api/roles/sync { discordId? username? } → returns { role }
 	struct RoleSyncResult
