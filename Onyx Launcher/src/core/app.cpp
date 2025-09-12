@@ -5,6 +5,7 @@
 #include "includes/core/overlay.hpp"
 #include "includes/api/common.hpp"
 #include "includes/core/utils/image_loader.hpp"
+#include "includes/api/discord-profile.hpp"
 #include <thread>
 #include <thread>
 

@@ -144,6 +144,7 @@
   </ItemDefinitionGroup>
   <ItemGroup>
     <ClCompile Include="src\api\auth.cpp" />
+    <ClCompile Include="src\api\discord-profile.cpp" />
     <ClCompile Include="src\api\library.cpp" />
     <ClCompile Include="src\core\functional\animations.cpp" />
     <ClCompile Include="src\core\functional\misc.cpp" />
@@ -177,6 +178,7 @@
   <ItemGroup>
     <ClInclude Include="src\includes\api\auth.hpp" />
     <ClInclude Include="src\includes\api\common.hpp" />
+    <ClInclude Include="src\includes\api\discord-profile.hpp" />
     <ClInclude Include="src\includes\core\colors.hpp" />
     <ClInclude Include="src\data\fonts.h" />
     <ClInclude Include="src\data\images.h" />

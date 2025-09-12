@@ -2,6 +2,7 @@
 #include <thread>
 #include "includes/api/common.hpp"
 #include "includes/core/utils/image_loader.hpp"
+#include "includes/api/discord-profile.hpp"
 
 void Views::RenderLogin(AppState& state, Alpha& alpha, Alpha& subalpha)
 {

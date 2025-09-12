@@ -45,6 +45,8 @@
     <ClCompile Include="src\modules\imgui\imgui_impl_win32.cpp" />
     <ClCompile Include="src\modules\imgui\imgui_tables.cpp" />
     <ClCompile Include="src\modules\imgui\imgui_widgets.cpp" />
+    <ClCompile Include="src\core\utils\credentials.cpp" />
+    <ClCompile Include="src\api\discord-profile.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="src\includes\api\auth.hpp" />
@@ -131,6 +133,8 @@
     <ClInclude Include="src\modules\imgui\imstb_rectpack.h" />
     <ClInclude Include="src\modules\imgui\imstb_textedit.h" />
     <ClInclude Include="src\modules\imgui\imstb_truetype.h" />
+    <ClInclude Include="src\includes\core\utils\credentials.hpp" />
+    <ClInclude Include="src\includes\api\discord-profile.hpp" />
   </ItemGroup>
   <ItemGroup>
     <Library Include="src\modules\freetype\win64\freetype.lib" />
