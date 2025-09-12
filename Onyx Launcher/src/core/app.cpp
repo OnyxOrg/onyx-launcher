@@ -16,6 +16,10 @@ static constexpr float kLinkSuccessFadeSeconds = 1.5f;
 static std::atomic<bool> g_showCancelFade{ false };
 static double g_cancelFadeEndTime = 0.0;
 static constexpr float kLinkCancelFadeSeconds = 1.5f;
+// Defer cancel briefly to avoid flashing when success is detected just after window closes
+static std::atomic<bool> g_pendingCancel{ false };
+static double g_pendingCancelStartTime = 0.0;
+static constexpr float kCancelDelaySeconds = 0.35f;
 
 // Forward declare extended overlay API (header should also declare this)
 void RenderLoadingOverlayEx(const char* label, float alphaMultiplier);
@@ -343,24 +347,24 @@ namespace App
 								ShellExecuteW(nullptr, L"open", wurl.c_str(), nullptr, nullptr, SW_SHOWNORMAL);
 							}).detach();
 
-							// Start a watcher that closes overlay as soon as the auth window is closed
+							// watcher: mark cancel intent when window closes; don't immediately show overlay
 							std::thread([&state]() {
 								bool sawWindow = false;
 								for (;;) {
 									if (g_showLinkSuccessFade) break; // already succeeded
 									bool open = IsDiscordAuthWindowOpen();
 									if (open) sawWindow = true;
-									if (sawWindow && !open) { 
-										g_showCancelFade = true; 
-										g_cancelFadeEndTime = ImGui::GetTime() + kLinkCancelFadeSeconds; 
-										state.isLinkingDiscord = false; 
-										break; 
+									if (sawWindow && !open) {
+										g_pendingCancel = true;
+										g_pendingCancelStartTime = ImGui::GetTime();
+										state.isLinkingDiscord = false;
+										break;
 									}
 									std::this_thread::sleep_for(std::chrono::milliseconds(120));
 								}
 							}).detach();
 
-							// Poll for updated link state (faster interval) and stop immediately on success or watcher close
+							// poll success
 							std::thread([&state]() {
 								for (int i = 0; i < 40; ++i)
 								{
@@ -379,14 +383,13 @@ namespace App
 												if (srv) state.avatarTexture = srv;
 											}).detach();
 										}
-										// After link established, sync role immediately
 										auto sync = Api::SyncRole(state.username, state.discordId);
 										if (sync.ok && !sync.role.empty()) state.role = sync.role;
-										// Trigger a short success fade-out (local globals)
 										g_showLinkSuccessFade = true;
 										g_linkSuccessEndTime = ImGui::GetTime() + kLinkSuccessFadeSeconds;
 										state.isLinkingDiscord = false;
-										g_showCancelFade = false; // cancel any pending cancel-fade
+										g_showCancelFade = false;
+										g_pendingCancel = false;
 										break;
 									}
 									if (!state.isLinkingDiscord) break; // watcher closed it
@@ -439,11 +442,19 @@ namespace App
 			// Only in Profile tab: show linking overlay and fades
 			if (subalpha->tab == profile)
 			{
-				if (state.isLinkingDiscord)
+				// First, materialize any deferred cancel even if still flagged as linking
+				if (g_pendingCancel && !g_showLinkSuccessFade)
 				{
-					RenderLoadingOverlay("Linking Discord...");
+					if (ImGui::GetTime() - g_pendingCancelStartTime >= kCancelDelaySeconds)
+					{
+						g_pendingCancel = false;
+						g_showCancelFade = true;
+						g_cancelFadeEndTime = ImGui::GetTime() + kLinkCancelFadeSeconds;
+						state.isLinkingDiscord = false;
+					}
 				}
-				else if (g_showLinkSuccessFade)
+
+				if (g_showLinkSuccessFade)
 				{
 					float remain = (float)(g_linkSuccessEndTime - ImGui::GetTime());
 					float a = remain <= 0.0f ? 0.0f : (remain / kLinkSuccessFadeSeconds);
@@ -460,6 +471,15 @@ namespace App
 						RenderLoadingOverlayEx("Cancelled", a);
 					else
 						g_showCancelFade = false;
+				}
+				else if (state.isLinkingDiscord && !g_pendingCancel)
+				{
+					RenderLoadingOverlay("Linking Discord...");
+				}
+				else if (g_pendingCancel)
+				{
+					// Keep the same visual overlay while we wait to confirm cancel
+					RenderLoadingOverlay("Linking Discord...");
 				}
 			}
 
