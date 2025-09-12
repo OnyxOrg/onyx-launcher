@@ -1,6 +1,7 @@
 #pragma once
 
 #include <string>
+#include <cstdlib>
 
 namespace ApiConfig
 {
@@ -19,7 +20,6 @@ namespace ApiConfig
 
 	inline std::string GetDiscordRedirectUri()
 	{
-		// Use the Discord bot API for OAuth redirect (no webapp required)
 		return GetPrimaryBaseUrl() + std::string("/api/auth/discord/redirect");
 	}
 

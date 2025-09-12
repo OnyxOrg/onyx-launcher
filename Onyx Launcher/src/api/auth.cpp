@@ -10,6 +10,7 @@ namespace Api
 		try
 		{
 			httplib::Client cli(baseUrl.c_str());
+			cli.set_connection_timeout(2, 0);
 			cli.set_read_timeout(5, 0);
 			cli.set_write_timeout(5, 0);
 
@@ -60,13 +61,7 @@ namespace Api
 	AuthResult Login(const std::string& username, const std::string& password)
 	{
 		AuthResult result;
-		if (TryLogin(ApiConfig::GetPrimaryBaseUrl(), username, password, result))
-			return result;
-		// Fallbacks for local/dev environments
-		if (TryLogin("http://localhost:3000", username, password, result))
-			return result;
-		if (TryLogin("http://127.0.0.1:3000", username, password, result))
-			return result;
+		(void)TryLogin(ApiConfig::GetPrimaryBaseUrl(), username, password, result);
 		return result;
 	}
 
@@ -75,16 +70,16 @@ namespace Api
 		AuthResult out;
 		try
 		{
-			httplib::Client cli(ApiConfig::GetPrimaryBaseUrl().c_str());
-			cli.set_read_timeout(5, 0);
-			cli.set_write_timeout(5, 0);
-
 			nlohmann::json body;
 			body["username"] = username;
 			body["password"] = password;
 			body["key"] = licenseKey;
 
-			auto res = cli.Post("/api/webapp/register", body.dump(), "application/json");
+			httplib::Client cli(ApiConfig::GetPrimaryBaseUrl().c_str());
+			cli.set_connection_timeout(2, 0);
+			cli.set_read_timeout(5, 0);
+			cli.set_write_timeout(5, 0);
+			httplib::Result res = cli.Post("/api/webapp/register", body.dump(), "application/json");
 			if (!res)
 			{
 				out.error = "Connection failed";
@@ -115,11 +110,12 @@ namespace Api
 		UserInfo info;
 		try
 		{
+			std::string path = std::string("/api/user/") + username;
 			httplib::Client cli(ApiConfig::GetPrimaryBaseUrl().c_str());
+			cli.set_connection_timeout(2, 0);
 			cli.set_read_timeout(5, 0);
 			cli.set_write_timeout(5, 0);
-			std::string path = std::string("/api/user/") + username;
-			auto res = cli.Get(path.c_str());
+			httplib::Result res = cli.Get(path.c_str());
 			if (!res || res->status != 200)
 				return info;
 			nlohmann::json j = nlohmann::json::parse(res->body, nullptr, false);
@@ -147,11 +143,12 @@ namespace Api
 	{
 		try
 		{
+			nlohmann::json body; body["username"] = username;
 			httplib::Client cli(ApiConfig::GetPrimaryBaseUrl().c_str());
+			cli.set_connection_timeout(2, 0);
 			cli.set_read_timeout(5, 0);
 			cli.set_write_timeout(5, 0);
-			nlohmann::json body; body["username"] = username;
-			auto res = cli.Post("/api/unlink-discord", body.dump(), "application/json");
+			httplib::Result res = cli.Post("/api/unlink-discord", body.dump(), "application/json");
 			return res && res->status == 200;
 		}
 		catch (...) { return false; }
@@ -162,14 +159,15 @@ namespace Api
 		RoleSyncResult out;
 		try
 		{
-			httplib::Client cli(ApiConfig::GetPrimaryBaseUrl().c_str());
-			cli.set_read_timeout(5, 0);
-			cli.set_write_timeout(5, 0);
 			nlohmann::json body;
 			if (!discordId.empty()) body["discordId"] = discordId;
 			else if (!username.empty()) body["username"] = username;
 			else return out;
-			auto res = cli.Post("/api/roles/sync", body.dump(), "application/json");
+			httplib::Client cli(ApiConfig::GetPrimaryBaseUrl().c_str());
+			cli.set_connection_timeout(2, 0);
+			cli.set_read_timeout(5, 0);
+			cli.set_write_timeout(5, 0);
+			httplib::Result res = cli.Post("/api/roles/sync", body.dump(), "application/json");
 			if (!res || res->status != 200) return out;
 			nlohmann::json j = nlohmann::json::parse(res->body, nullptr, false);
 			if (j.is_discarded()) return out;
