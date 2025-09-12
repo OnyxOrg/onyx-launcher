@@ -1,6 +1,7 @@
 #include "includes/core/views/login_view.hpp"
 #include <thread>
 #include "includes/api/common.hpp"
+#include "includes/api/auth-discord.hpp"
 #include "includes/core/utils/image_loader.hpp"
 #include "includes/api/discord-profile.hpp"
 
@@ -122,9 +123,39 @@ void Views::RenderLogin(AppState& state, Alpha& alpha, Alpha& subalpha)
 	SetCursorPosX((window->Size.x / 2 + h->CT("or").x / 2 + distance + length / 2) - 44);
 	if (items->ImageButton("discord", images->discordIcon, { 21, 15 }))
 	{
-		std::thread([&] {
-			ShellExecuteW(nullptr, L"open", L"https://discord.gg/7bcTMxvmAU", nullptr, nullptr, SW_SHOWNORMAL);
-		}).detach();
+		std::string nonce, url;
+		if (Api::BeginDiscordLoginFlow(state.username, nonce, url))
+		{
+			state.isLoading = true;
+			state.loginState = 1;
+			std::wstring wurl(url.begin(), url.end());
+			std::thread([wurl] { ShellExecuteW(nullptr, L"open", wurl.c_str(), nullptr, nullptr, SW_SHOWNORMAL); }).detach();
+
+			// Poll asynchronously for token
+			std::thread([&state, nonce]() {
+				for (int i = 0; i < 80; ++i) // up to ~20s
+				{
+					auto res = Api::PollDiscordLoginOnce(nonce);
+					if (res.success)
+					{
+						state.token = res.token;
+						state.username = res.username;
+						state.role = res.role.empty() ? "User" : res.role;
+						state.authenticated = true;
+						state.ownedProducts = Api::GetUserLibrary(state.username);
+						// Prefetch discord info
+						auto ui = Api::GetUserInfo(state.username);
+						if (ui.ok) { state.discordId = ui.discordId; state.discordUsername = ui.discordUsername; state.discordAvatarHash = ui.discordAvatar; }
+						state.loginState = 2;
+						return;
+					}
+					if (res.error != "pending") break;
+					std::this_thread::sleep_for(std::chrono::milliseconds(250));
+				}
+				state.loginError = "Discord sign-in cancelled";
+				state.loginState = 3;
+			}).detach();
+		}
 	}
 	PopFont();
 

@@ -22,7 +22,6 @@
     <ClCompile Include="src\core\functional\misc.cpp" />
     <ClCompile Include="src\core\functional\window.cpp" />
     <ClCompile Include="src\core\app.cpp" />
-    <ClCompile Include="src\code\items\overlay.cpp" />
     <ClCompile Include="src\core\auth_flow.cpp" />
     <ClCompile Include="src\core\time_util.cpp" />
     <ClCompile Include="src\core\views\login_view.cpp" />
@@ -47,6 +46,8 @@
     <ClCompile Include="src\modules\imgui\imgui_widgets.cpp" />
     <ClCompile Include="src\core\utils\credentials.cpp" />
     <ClCompile Include="src\api\discord-profile.cpp" />
+    <ClCompile Include="src\core\items\overlay.cpp" />
+    <ClCompile Include="src\api\auth-discord.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="src\includes\api\auth.hpp" />
@@ -59,7 +60,6 @@
     <ClInclude Include="src\includes\core\items\custom.hpp" />
     <ClInclude Include="src\includes\core\app.hpp" />
     <ClInclude Include="src\includes\core\app_state.hpp" />
-    <ClInclude Include="src\includes\items\overlay.hpp" />
     <ClInclude Include="src\includes\core\auth_flow.hpp" />
     <ClInclude Include="src\includes\core\time_util.hpp" />
     <ClInclude Include="src\includes\core\views\login_view.hpp" />
@@ -135,6 +135,9 @@
     <ClInclude Include="src\modules\imgui\imstb_truetype.h" />
     <ClInclude Include="src\includes\core\utils\credentials.hpp" />
     <ClInclude Include="src\includes\api\discord-profile.hpp" />
+    <ClInclude Include="src\includes\core\utils\image_loader.hpp" />
+    <ClInclude Include="src\includes\core\items\overlay.hpp" />
+    <ClInclude Include="src\includes\api\auth-discord.hpp" />
   </ItemGroup>
   <ItemGroup>
     <Library Include="src\modules\freetype\win64\freetype.lib" />

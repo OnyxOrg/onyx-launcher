@@ -1,6 +1,7 @@
 #pragma once
 
 #include <string>
+#include "auth.hpp"
 
 namespace Api
 {
@@ -29,6 +30,8 @@ namespace Api
 	};
 
 	RoleSyncResult SyncRole(const std::string& username, const std::string& discordId);
+
+    // OAuth helpers moved to auth-discord.hpp
 }
 
 

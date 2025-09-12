@@ -23,7 +23,7 @@ namespace ApiConfig
 		return GetPrimaryBaseUrl() + std::string("/api/auth/discord/redirect");
 	}
 
-	inline std::string BuildDiscordAuthorizeUrl(const std::string& stateUsername)
+	inline std::string BuildDiscordAuthorizeUrl(const std::string& rawState)
 	{
 		auto PercentEncode = [](const std::string& s) {
 			std::string out; out.reserve(s.size() * 3);
@@ -43,8 +43,19 @@ namespace ApiConfig
 		url += "&response_type=code";
 		url += "&redirect_uri=" + PercentEncode(GetDiscordRedirectUri());
 		url += "&scope=identify%20email%20connections%20guilds%20guilds.join";
-		url += "&state=" + stateUsername;
+		url += "&state=" + rawState;
 		return url;
+	}
+
+	// New helpers for launcher-initiated Discord login
+	inline std::string BuildLauncherDiscordLoginState(const std::string& nonce)
+	{
+		return std::string("discord_oauth:") + nonce;
+	}
+
+	inline std::string BuildLauncherPollPath(const std::string& nonce)
+	{
+		return std::string("/api/launcher/oauth/poll?nonce=") + nonce;
 	}
 
 	// Build a Discord CDN avatar URL. If avatarHash is empty, return empty string.

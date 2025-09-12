@@ -1,5 +1,6 @@
 #include "../includes/api/discord-profile.hpp"
 #include "../includes/api/common.hpp"
+#include "../includes/api/auth-discord.hpp"
 #include "../../deps/httplib.h"
 #include "../../deps/json.hpp"
 
