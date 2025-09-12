@@ -2,7 +2,7 @@
 #include "includes/core/auth_flow.hpp"
 #include "includes/core/views/login_view.hpp"
 #include "includes/core/views/register_view.hpp"
-#include "includes/core/overlay.hpp"
+#include "includes/core/items/overlay.hpp"
 #include "includes/api/common.hpp"
 #include "includes/core/utils/image_loader.hpp"
 #include "includes/api/discord-profile.hpp"
@@ -355,8 +355,7 @@ namespace App
 									bool open = IsDiscordAuthWindowOpen();
 									if (open) sawWindow = true;
 									if (sawWindow && !open) {
-										g_pendingCancel = true;
-										g_pendingCancelStartTime = ImGui::GetTime();
+										g_pendingCancel = true; // UI thread will set start time
 										state.isLinkingDiscord = false;
 										break;
 									}
@@ -390,6 +389,7 @@ namespace App
 										state.isLinkingDiscord = false;
 										g_showCancelFade = false;
 										g_pendingCancel = false;
+										g_pendingCancelStartTime = 0.0;
 										break;
 									}
 									if (!state.isLinkingDiscord) break; // watcher closed it
@@ -442,12 +442,19 @@ namespace App
 			// Only in Profile tab: show linking overlay and fades
 			if (subalpha->tab == profile)
 			{
+				// Stamp the start time on UI thread when we first see pending-cancel
+				if (g_pendingCancel && g_pendingCancelStartTime <= 0.0)
+				{
+					g_pendingCancelStartTime = ImGui::GetTime();
+				}
+
 				// First, materialize any deferred cancel even if still flagged as linking
 				if (g_pendingCancel && !g_showLinkSuccessFade)
 				{
 					if (ImGui::GetTime() - g_pendingCancelStartTime >= kCancelDelaySeconds)
 					{
 						g_pendingCancel = false;
+						g_pendingCancelStartTime = 0.0;
 						g_showCancelFade = true;
 						g_cancelFadeEndTime = ImGui::GetTime() + kLinkCancelFadeSeconds;
 						state.isLinkingDiscord = false;

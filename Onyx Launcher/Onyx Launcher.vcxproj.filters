@@ -22,7 +22,7 @@
     <ClCompile Include="src\core\functional\misc.cpp" />
     <ClCompile Include="src\core\functional\window.cpp" />
     <ClCompile Include="src\core\app.cpp" />
-    <ClCompile Include="src\core\overlay.cpp" />
+    <ClCompile Include="src\code\items\overlay.cpp" />
     <ClCompile Include="src\core\auth_flow.cpp" />
     <ClCompile Include="src\core\time_util.cpp" />
     <ClCompile Include="src\core\views\login_view.cpp" />
@@ -59,7 +59,7 @@
     <ClInclude Include="src\includes\core\items\custom.hpp" />
     <ClInclude Include="src\includes\core\app.hpp" />
     <ClInclude Include="src\includes\core\app_state.hpp" />
-    <ClInclude Include="src\includes\core\overlay.hpp" />
+    <ClInclude Include="src\includes\items\overlay.hpp" />
     <ClInclude Include="src\includes\core\auth_flow.hpp" />
     <ClInclude Include="src\includes\core\time_util.hpp" />
     <ClInclude Include="src\includes\core\views\login_view.hpp" />
