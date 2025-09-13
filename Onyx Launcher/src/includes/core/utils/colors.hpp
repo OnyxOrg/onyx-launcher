@@ -1,5 +1,5 @@
 #pragma once
-#include "main.hpp"
+#include "../main.hpp"
 
 namespace colors
 {
@@ -34,3 +34,5 @@ namespace colors
 	inline vec4 RoleManagerProfile = rgba(0x16, 0x67, 0x94, 255); // #166794
 	inline vec4 RoleUserProfile    = rgba(0x88, 0x88, 0x88, 255); // #888
 }
+
+

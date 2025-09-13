@@ -152,8 +152,8 @@
     <ClCompile Include="src\core\functional\window.cpp" />
     <ClCompile Include="src\core\app.cpp" />
     <ClCompile Include="src\core\items\overlay.cpp" />
-    <ClCompile Include="src\core\auth_flow.cpp" />
-    <ClCompile Include="src\core\time_util.cpp" />
+    <ClCompile Include="src\core\functional\auth_flow.cpp" />
+    <ClCompile Include="src\core\utils\time_util.cpp" />
     <ClCompile Include="src\core\views\login_view.cpp" />
     <ClCompile Include="src\core\views\register_view.cpp" />
     <ClCompile Include="src\core\items\announcement.cpp" />
@@ -182,7 +182,7 @@
     <ClInclude Include="src\includes\api\auth.hpp" />
     <ClInclude Include="src\includes\api\common.hpp" />
     <ClInclude Include="src\includes\api\discord-profile.hpp" />
-    <ClInclude Include="src\includes\core\colors.hpp" />
+    <ClInclude Include="src\includes\core\utils\colors.hpp" />
     <ClInclude Include="src\data\fonts.h" />
     <ClInclude Include="src\data\images.h" />
     <ClInclude Include="src\includes\core\animations.h" />
@@ -192,8 +192,8 @@
     <ClInclude Include="src\includes\core\app_state.hpp" />
     <ClInclude Include="src\includes\core\utils\image_loader.hpp" />
     <ClInclude Include="src\includes\core\items\overlay.hpp" />
-    <ClInclude Include="src\includes\core\auth_flow.hpp" />
-    <ClInclude Include="src\includes\core\time_util.hpp" />
+    <ClInclude Include="src\includes\core\functional\auth_flow.hpp" />
+    <ClInclude Include="src\includes\core\utils\time_util.hpp" />
     <ClInclude Include="src\includes\core\views\login_view.hpp" />
     <ClInclude Include="src\includes\core\views\register_view.hpp" />
     <ClInclude Include="src\includes\core\utils\credentials.hpp" />

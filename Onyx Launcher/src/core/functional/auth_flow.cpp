@@ -1,4 +1,4 @@
-#include "includes/core/auth_flow.hpp"
+#include "includes/core/functional/auth_flow.hpp"
 #include "includes/api/discord-profile.hpp"
 #include <thread>
 

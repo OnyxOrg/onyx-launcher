@@ -1,5 +1,5 @@
 #include "includes/core/app.hpp"
-#include "includes/core/auth_flow.hpp"
+#include "includes/core/functional/auth_flow.hpp"
 #include "includes/core/views/login_view.hpp"
 #include "includes/core/views/register_view.hpp"
 #include "includes/core/items/overlay.hpp"
