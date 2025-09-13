@@ -30,8 +30,10 @@ bool Items::Button(const std::string& label, const vec2& size)
 	bool r = InvisibleButton(label.c_str(), size);
 	bool act(IsItemActive()); bool hov(IsItemHovered());
 
-	vec4 bgcol = act ? bgAct : bg;
-	vec4 textcol = act ? textAct : textC;
+	// Add a subtle hover effect for neutral buttons (used by Cancel in unlink modal)
+	vec4 hovBg = vec4(bg.x, bg.y, bg.z, ImClamp(bg.w + 0.15f, 0.0f, 1.0f));
+	vec4 bgcol = act ? bgAct : (hov ? hovBg : bg);
+	vec4 textcol = act ? textAct : (hov ? textAct : textC);
 
 	Buttons& w = anim.emplace(label, Buttons(bgcol, textcol)).first->second;
 
@@ -47,6 +49,7 @@ bool Items::Button(const std::string& label, const vec2& size)
 
 	return r;
 }
+
 
 bool Items::TextButton(const std::string& text, const std::string& id, vec4 col)
 {
