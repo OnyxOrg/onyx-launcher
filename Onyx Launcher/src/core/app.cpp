@@ -3,6 +3,7 @@
 #include "includes/core/views/login_view.hpp"
 #include "includes/core/views/register_view.hpp"
 #include "includes/core/items/overlay.hpp"
+#include "includes/core/views/unlink-modal.hpp"
 #include "includes/api/common.hpp"
 #include "includes/core/utils/image_loader.hpp"
 #include "includes/api/discord-profile.hpp"
@@ -447,51 +448,8 @@ namespace App
 			// Only in Profile tab: show linking overlay and fades
 			if (subalpha->tab == profile)
 			{
-				// If the account was created via Discord and user requested unlink, ask for new password
-				if (state.showUnlinkPasswordModal)
-				{
-					ImGui::OpenPopup("unlink_modal");
-					ImGui::PushStyleVar(ImGuiStyleVar_WindowRounding, 10.0f);
-					ImGui::PushStyleVar(ImGuiStyleVar_WindowPadding, { 18, 16 });
-					ImGui::PushStyleColor(ImGuiCol_ModalWindowDimBg, ImVec4(0.0f, 0.0f, 0.0f, 0.70f));
-					ImGui::SetNextWindowPos(ImGui::GetMainViewport()->GetCenter(), ImGuiCond_Appearing, ImVec2(0.5f, 0.5f));
-					if (ImGui::BeginPopupModal("unlink_modal", nullptr, ImGuiWindowFlags_NoTitleBar | ImGuiWindowFlags_AlwaysAutoResize | ImGuiWindowFlags_NoMove))
-					{
-						PushFont(fonts->InterM[2]);
-						draw->Text("Set password to unlink", colors::Main);
-						PopFont();
-						ImGui::Dummy({0, 8});
-						SetCursorPosX(ImGui::GetCursorPosX());
-						items->Input("New password", EYE_SLASHED, EYE, state.unlinkPassBuf, _size(state.unlinkPassBuf), ImGuiInputTextFlags_Password);
-						if (state.unlinkErrMsg[0] != '\\0') { ImGui::Text("%s", state.unlinkErrMsg); }
-						ImGui::Dummy({0, 12});
-						if (items->ButtonDangerIcon("Unlink", "", { 150, 34 }))
-						{
-							std::string pass(state.unlinkPassBuf);
-							std::thread([&state, pass]() {
-								Api::UnlinkDiscord(state.username, pass);
-								Api::UserInfo ui = Api::GetUserInfo(state.username);
-								state.discordId = ui.discordConnected ? ui.discordId : std::string();
-								state.discordUsername = ui.discordConnected ? ui.discordUsername : std::string();
-								state.discordAvatarHash.clear();
-								if (state.avatarTexture) { state.avatarTexture->Release(); state.avatarTexture = nullptr; }
-								auto sync = Api::SyncRole(state.username, state.discordId);
-								if (sync.ok && !sync.role.empty()) state.role = sync.role;
-							}).detach();
-							state.showUnlinkPasswordModal = false;
-							ImGui::CloseCurrentPopup();
-						}
-						ImGui::SameLine();
-						if (items->Button("Cancel", { 150, 34 }))
-						{
-							state.showUnlinkPasswordModal = false;
-							ImGui::CloseCurrentPopup();
-						}
-						ImGui::EndPopup();
-					}
-					ImGui::PopStyleColor();
-					ImGui::PopStyleVar(2);
-				}
+				// Render the unlink modal (if requested)
+				UI::RenderUnlinkModal(state);
 				// Stamp the start time on UI thread when we first see pending-cancel
 				if (g_pendingCancel && g_pendingCancelStartTime <= 0.0)
 				{

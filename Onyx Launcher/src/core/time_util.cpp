@@ -73,5 +73,3 @@ std::string FormatTimeLeftFromIso(const std::string& iso, vec4& outColor)
 
 	return text;
 }
-
-

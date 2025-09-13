@@ -164,6 +164,7 @@
     <ClCompile Include="src\core\items\product.cpp" />
     <ClCompile Include="src\core\items\profile.cpp" />
     <ClCompile Include="src\core\items\tab.cpp" />
+    <ClCompile Include="src\core\views\unlink-modal.cpp" />
     <ClCompile Include="src\main.cpp" />
     <ClCompile Include="src\modules\freetype\imgui_freetype.cpp" />
     <ClCompile Include="src\modules\freetype\include\imgui_freetype.cpp" />
@@ -196,6 +197,7 @@
     <ClInclude Include="src\includes\core\views\login_view.hpp" />
     <ClInclude Include="src\includes\core\views\register_view.hpp" />
     <ClInclude Include="src\includes\core\utils\credentials.hpp" />
+    <ClInclude Include="src\includes\core\views\unlink-modal.hpp" />
     <ClInclude Include="src\headers\api\discord.hpp" />
     <ClInclude Include="src\includes\api\library.hpp" />
     <ClInclude Include="src\deps\httplib.h" />
