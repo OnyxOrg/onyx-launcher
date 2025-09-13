@@ -9,13 +9,33 @@ namespace UI
 {
 	void RenderUnlinkModal(AppState& state)
 	{
-		if (!state.showUnlinkPasswordModal)
+		// Local animation state
+		static bool s_modalOpen = false;          // true while rendering (including fade-out)
+		static bool s_fadingOut = false;          // whether we are fading out
+		static double s_animStart = 0.0;          // animation start time
+		static const float kAnimDuration = 0.18f; // seconds
+
+		// Trigger open: when external state requests it and we are not already open
+		if (state.showUnlinkPasswordModal && !s_modalOpen)
+		{
+			s_modalOpen = true;
+			s_fadingOut = false;
+			s_animStart = GetTime();
+			OpenPopup("unlink_modal");
+		}
+
+		if (!s_modalOpen)
 			return;
 
-		OpenPopup("unlink_modal");
+		// Compute animation alpha based on current phase
+		float t = (float)(GetTime() - s_animStart);
+		float p = ImClamp(t / kAnimDuration, 0.0f, 1.0f);
+		float a = s_fadingOut ? (1.0f - p) : p; // fade-in to 1, fade-out to 0
+
+		PushStyleVar(ImGuiStyleVar_Alpha, a);
 		PushStyleVar(ImGuiStyleVar_WindowRounding, 10.0f);
 		PushStyleVar(ImGuiStyleVar_WindowPadding, { 18, 16 });
-		PushStyleColor(ImGuiCol_ModalWindowDimBg, ImVec4(0.0f, 0.0f, 0.0f, 0.70f));
+		PushStyleColor(ImGuiCol_ModalWindowDimBg, ImVec4(0.0f, 0.0f, 0.0f, 0.70f * a));
 		SetNextWindowPos(GetMainViewport()->GetCenter(), ImGuiCond_Appearing, ImVec2(0.5f, 0.5f));
 		if (BeginPopupModal("unlink_modal", nullptr, ImGuiWindowFlags_NoTitleBar | ImGuiWindowFlags_AlwaysAutoResize | ImGuiWindowFlags_NoMove))
 		{
@@ -40,19 +60,35 @@ namespace UI
 					auto sync = Api::SyncRole(state.username, state.discordId);
 					if (sync.ok && !sync.role.empty()) state.role = sync.role;
 				}).detach();
-				state.showUnlinkPasswordModal = false;
-				CloseCurrentPopup();
+				// Begin fade-out; we'll close when animation reaches 0
+				s_fadingOut = true;
+				s_animStart = GetTime();
 			}
 			SameLine();
 			if (items->Button("Cancel", { 150, 34 }))
 			{
-				state.showUnlinkPasswordModal = false;
-				CloseCurrentPopup();
+				// Start fade-out on cancel
+				s_fadingOut = true;
+				s_animStart = GetTime();
 			}
 			EndPopup();
 		}
 		PopStyleColor();
-		PopStyleVar(2);
+		PopStyleVar(3); // includes Alpha + WindowRounding + WindowPadding
+
+		// When fade-out completes, close the popup and clear external flag
+		if (s_fadingOut)
+		{
+			float t2 = (float)(GetTime() - s_animStart);
+			if (t2 >= kAnimDuration)
+			{
+				// finalize close
+				s_modalOpen = false;
+				s_fadingOut = false;
+				state.showUnlinkPasswordModal = false;
+				CloseCurrentPopup();
+			}
+		}
 	}
 }
 
