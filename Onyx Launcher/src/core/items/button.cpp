@@ -222,3 +222,35 @@ bool Items::ButtonDangerIcon(const std::string& label, const std::string& icon, 
 }
 
 
+bool Items::ButtonDanger(const std::string& label, const vec2& size)
+{
+    ImGuiWindow* window = GetCurrentWindow();
+    using namespace dangerbutton;
+
+    vec2 lSize(h->CT(label.c_str()));
+    vec2 pos = window->DC.CursorPos;
+
+    static std::map<std::string, Buttons> anim;
+
+    bool r = InvisibleButton(label.c_str(), size);
+    bool act(IsItemActive()); bool hov(IsItemHovered());
+
+    vec4 bgcol = hov ? bgAct : bg;
+    vec4 textcol = hov ? textAct : textC;
+
+    if (hov)
+        SetMouseCursor(ImGuiMouseCursor_Hand);
+
+    Buttons& w = anim.emplace(label, Buttons(bgcol, textcol)).first->second;
+
+    w.time = gui->xtime(gui->GlobalSpeed);
+    w.bgcol = ImLerp(w.bgcol, bgcol, w.time);
+    w.textcol = ImLerp(w.textcol, textcol, w.time);
+
+    window->DrawList->AddRectFilled(pos, pos + size, h->CO(w.bgcol), rounding);
+    window->DrawList->AddText(pos + (size - lSize) / 2, h->CO(w.textcol), label.c_str());
+
+    return r;
+}
+
+

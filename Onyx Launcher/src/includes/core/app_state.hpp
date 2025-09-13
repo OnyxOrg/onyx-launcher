@@ -36,6 +36,8 @@ struct AppState
 	bool isLinkingDiscord = false;
 	bool showUnlinkPasswordModal = false;
 	char unlinkPassBuf[42] = {0};
+	bool unlinkPassVisible = false;
+	char unlinkErrMsg[128] = {0};
 	std::string loginError;
 	bool showPostLoginSpinner = false;
 	double postSpinnerEndTime = 0.0;

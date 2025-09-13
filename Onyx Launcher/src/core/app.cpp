@@ -450,16 +450,22 @@ namespace App
 				// If the account was created via Discord and user requested unlink, ask for new password
 				if (state.showUnlinkPasswordModal)
 				{
-					ImGui::OpenPopup("Set Password to Unlink");
-					if (ImGui::BeginPopupModal("Set Password to Unlink", nullptr, ImGuiWindowFlags_AlwaysAutoResize))
+					ImGui::OpenPopup("unlink_modal");
+					ImGui::PushStyleVar(ImGuiStyleVar_WindowRounding, 10.0f);
+					ImGui::PushStyleVar(ImGuiStyleVar_WindowPadding, { 18, 16 });
+					ImGui::PushStyleColor(ImGuiCol_ModalWindowDimBg, ImVec4(0.0f, 0.0f, 0.0f, 0.70f));
+					ImGui::SetNextWindowPos(ImGui::GetMainViewport()->GetCenter(), ImGuiCond_Appearing, ImVec2(0.5f, 0.5f));
+					if (ImGui::BeginPopupModal("unlink_modal", nullptr, ImGuiWindowFlags_NoTitleBar | ImGuiWindowFlags_AlwaysAutoResize | ImGuiWindowFlags_NoMove))
 					{
-						PushFont(fonts->InterM[1]);
-						ImGui::Text("To unlink, set a new password for your Onyx account.");
+						PushFont(fonts->InterM[2]);
+						draw->Text("Set password to unlink", colors::Main);
 						PopFont();
-						ImGui::Spacing();
-						ImGui::InputText("New password", state.unlinkPassBuf, _size(state.unlinkPassBuf), ImGuiInputTextFlags_Password);
-						ImGui::Spacing();
-						if (ImGui::Button("Unlink", { 120, 30 }))
+						ImGui::Dummy({0, 8});
+						SetCursorPosX(ImGui::GetCursorPosX());
+						items->Input("New password", EYE_SLASHED, EYE, state.unlinkPassBuf, _size(state.unlinkPassBuf), ImGuiInputTextFlags_Password);
+						if (state.unlinkErrMsg[0] != '\\0') { ImGui::Text("%s", state.unlinkErrMsg); }
+						ImGui::Dummy({0, 12});
+						if (items->ButtonDangerIcon("Unlink", "", { 150, 34 }))
 						{
 							std::string pass(state.unlinkPassBuf);
 							std::thread([&state, pass]() {
@@ -476,13 +482,15 @@ namespace App
 							ImGui::CloseCurrentPopup();
 						}
 						ImGui::SameLine();
-						if (ImGui::Button("Cancel", { 120, 30 }))
+						if (items->Button("Cancel", { 150, 34 }))
 						{
 							state.showUnlinkPasswordModal = false;
 							ImGui::CloseCurrentPopup();
 						}
 						ImGui::EndPopup();
 					}
+					ImGui::PopStyleColor();
+					ImGui::PopStyleVar(2);
 				}
 				// Stamp the start time on UI thread when we first see pending-cancel
 				if (g_pendingCancel && g_pendingCancelStartTime <= 0.0)

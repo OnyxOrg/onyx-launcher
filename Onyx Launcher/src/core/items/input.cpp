@@ -72,7 +72,9 @@ bool Items::Input(const std::string& name, const std::string& iconA, const std::
 	vec4 textcol = act || strlen(buf) > 0 ? colors::Transparent : textC;
 	vec4 iconcol = ((hovCond && !IsOverlayActive() && (flags & ImGuiInputTextFlags_Password)) || act) ? iconAct : iconC;
 	vec4 bgcol = act ? bgAct : bg;
-	vec4 shadowcol = act ? shadowAct : shadowC;
+	// For unlink modal's password field specifically, suppress the active glow/border effect
+	bool isUnlinkModalPassword = (name == "New password");
+	vec4 shadowcol = (act && !isUnlinkModalPassword) ? shadowAct : shadowC;
 
 	vec2 nameSize = h->CT(name.c_str());
 

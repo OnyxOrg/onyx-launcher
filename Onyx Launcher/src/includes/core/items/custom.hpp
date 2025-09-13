@@ -98,6 +98,7 @@ struct Items
 	bool Profile(const std::string& name, const std::string& role, ID3D11ShaderResourceView* tex);
 	bool ButtonIcon(const std::string& label, const std::string& icon, const vec2& size);
 	bool ButtonDangerIcon(const std::string& label, const std::string& icon, const vec2& size);
+	bool ButtonDanger(const std::string& label, const vec2& size);
 	void SetInputError(const std::string& name, bool error);
 	void ClearInputError(const std::string& name);
 
