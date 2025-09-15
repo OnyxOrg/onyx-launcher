@@ -139,7 +139,7 @@
       <SubSystem>Windows</SubSystem>
       <GenerateDebugInformation>true</GenerateDebugInformation>
       <AdditionalLibraryDirectories>$(DXSDK_DIR)/Lib/x64;%(AdditionalLibraryDirectories)</AdditionalLibraryDirectories>
-      <AdditionalDependencies>d3d11.lib;d3dcompiler.lib;dxgi.lib;Crypt32.lib;%(AdditionalDependencies)</AdditionalDependencies>
+      <AdditionalDependencies>d3d11.lib;d3dcompiler.lib;dxgi.lib;Crypt32.lib;Wininet.lib;%(AdditionalDependencies)</AdditionalDependencies>
     </Link>
   </ItemDefinitionGroup>
   <ItemGroup>
@@ -165,7 +165,7 @@
     <ClCompile Include="src\core\items\profile.cpp" />
     <ClCompile Include="src\core\items\tab.cpp" />
     <ClCompile Include="src\core\views\unlink-modal.cpp" />
-    <ClCompile Include="src\core\utils\updater.cpp" />
+    <ClCompile Include="src\api\updater.cpp" />
     <ClCompile Include="src\main.cpp" />
     <ClCompile Include="src\modules\freetype\imgui_freetype.cpp" />
     <ClCompile Include="src\modules\freetype\include\imgui_freetype.cpp" />
@@ -186,7 +186,8 @@
     <ClInclude Include="src\includes\core\utils\colors.hpp" />
     <ClInclude Include="src\data\fonts.h" />
     <ClInclude Include="src\data\images.h" />
-    <ClInclude Include="src\includes\core\animations.h" />
+    
+    <ClInclude Include="src\includes\core\functional\animations.hpp" />
     <ClInclude Include="src\includes\core\main.hpp" />
     <ClInclude Include="src\includes\core\items\custom.hpp" />
     <ClInclude Include="src\includes\core\app.hpp" />

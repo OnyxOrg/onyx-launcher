@@ -93,7 +93,7 @@ INT __stdcall WinMain(HINSTANCE, HINSTANCE, LPSTR, int)
     // Start background update check (non-blocking)
     std::thread([]{
         Updater::Manifest m;
-        if (Updater::FetchManifest(ApiConfig::LauncherManifestUrl, m))
+        if (Updater::FetchManifest(ApiConfig::GetLauncherManifestUrl(), m))
         {
             if (Updater::CompareVersions(ONYX_LAUNCHER_VERSION, m.version) < 0)
             {

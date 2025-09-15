@@ -2,6 +2,7 @@
 
 #include "../main.hpp"
 #include "../version.hpp"
+#include "../app_state.hpp"
 #include <string>
 #include <functional>
 
@@ -29,6 +30,12 @@ namespace Updater
     // Launch a PowerShell helper to replace current exe with new exe, relaunch, and exit current process.
     // Returns true if helper launched.
     bool LaunchSelfReplaceAndExit(const std::wstring& newExePath);
+
+    // High-level UI and update flow orchestrator
+    void PromptAndMaybeUpdate(AppState& state);
+
+    // Load .env (placed next to the exe) into process environment (idempotent)
+    void LoadEnvFile();
 }
 
 

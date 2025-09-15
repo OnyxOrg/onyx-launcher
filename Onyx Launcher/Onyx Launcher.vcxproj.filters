@@ -55,7 +55,7 @@
     <ClInclude Include="src\includes\core\colors.hpp" />
     <ClInclude Include="src\data\fonts.h" />
     <ClInclude Include="src\data\images.h" />
-    <ClInclude Include="src\includes\core\animations.h" />
+    <ClInclude Include="src\includes\core\functional\animations.hpp" />
     <ClInclude Include="src\includes\core\main.hpp" />
     <ClInclude Include="src\includes\core\items\custom.hpp" />
     <ClInclude Include="src\includes\core\app.hpp" />

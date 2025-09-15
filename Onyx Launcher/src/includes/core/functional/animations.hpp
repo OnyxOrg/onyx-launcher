@@ -7,7 +7,7 @@
 
 typedef ImVec2 vec2;
 
-class Animations // Mainly IN-OUT animations, rest is kinda pointless
+class Animations
 {
 public:
 	enum Easings
@@ -36,4 +36,5 @@ private:
 		bool condition, init;
 	};
 }; inline std::unique_ptr<Animations> animations = std::make_unique<Animations>();
+
 
