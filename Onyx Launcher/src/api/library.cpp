@@ -13,8 +13,6 @@ namespace Api
 		return out;
 	}
 
-	
-
 	std::vector<LibraryProduct> GetUserLibrary(const std::string& username)
 	{
 		std::vector<LibraryProduct> result;

@@ -1,5 +1,4 @@
 #include "includes/core/app.hpp"
-#include "includes/core/functional/auth_flow.hpp"
 #include "includes/core/views/login_view.hpp"
 #include "includes/core/views/register_view.hpp"
 #include "includes/core/items/overlay.hpp"
@@ -7,9 +6,6 @@
 #include "includes/api/common.hpp"
 #include "includes/core/utils/image_loader.hpp"
 #include "includes/api/discord-profile.hpp"
-#include "includes/core/utils/updater.hpp"
-#include "includes/core/version.hpp"
-#include <thread>
 #include <thread>
 
 // Local fade-out state for Discord link success
@@ -204,9 +200,9 @@ namespace App
 				{
 					PushStyleVarY(ImGuiStyleVar_ItemSpacing, 12);
 
-					items->Announcement("ONYX UPDATE 1.0", "Highlights: new dashboard, faster authentication, library auto-updates,\nperformance improvements, stability fixes, and a refreshed look.", "August 6, 2025", feature);
+					items->Announcement("ONYX UPDATE 1.0", "Highlights: new dashboard, faster authentication, library improvements,\nperformance improvements, stability fixes, and a refreshed look.", "August 6, 2025", feature);
 					items->Announcement("ONYX UPDATE 0.4", "Improvements: account linking, refined installer, reduced CPU usage,\nfixed crashes when switching tabs and clearer error messages.", "August 6, 2025", updated);
-					items->Announcement("ONYX UPDATE 0.1", "Bug fixes: resolved login timeouts, license sync issues and UI clipping,\nmore reliable updater and a smoother first-run experience.", "August 6, 2025", bugfix);
+					items->Announcement("ONYX UPDATE 0.1", "Bug fixes: resolved login timeouts, license sync issues and UI clipping,\nand a smoother first-run experience.", "August 6, 2025", bugfix);
 					items->Announcement("ONYX UPDATE 0.3", "Maintenance: patched overlay memory leak, corrected theme colors,\nfixed broken dashboard links and minor layout glitches.", "August 6, 2025", bugfix);
 					
 					Spacing();
@@ -505,7 +501,5 @@ namespace App
 
 		PopStyleVar(); // main alpha
 
-		// Delegate update UI/flow to updater module
-		Updater::PromptAndMaybeUpdate(state);
 	}
 }

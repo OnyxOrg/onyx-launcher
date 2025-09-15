@@ -1,59 +1,9 @@
 ﻿#include "includes\\core\\items\\custom.hpp"
 #include "includes\\core\\app.hpp"
 #include "includes\\core\\app_state.hpp"
-#include <thread>
-#include <ctime>
-#include <chrono>
-#include <cstdio>
-#include <atomic>
-#include "includes\\api\\auth.hpp"
-#include "includes\\api\\library.hpp"
-#include <cstring>
-#include "includes\\core\\version.hpp"
-#include "includes\\core\\utils\\updater.hpp"
-#include "includes\\api\\common.hpp"
 
 static AppState g_state;
 
-char loginUsr[42]
-    ,loginPas[42]
-    ,registerUsr[42]
-    ,registerPas[42]
-    ,licbuf[42]; // + 1 byte for null character
-
-static char loginErrMsg[128];
-
-static std::string g_token;
-static std::string g_username;
-static std::string g_role;
-static bool g_authenticated = false;
-static std::vector<Api::LibraryProduct> g_ownedProducts;
-static std::atomic<int> g_loginState{ 0 }; // 0 idle, 1 loading, 2 success, 3 failure
-static bool g_isLoading = false;
-static std::string g_loginError;
-static bool g_showPostLoginSpinner = false;
-static double g_postSpinnerEndTime = 0.0;
-static constexpr float kPostLoginSpinnerSeconds = 2.5f; // spinner duration (seconds)
-
-static bool LauncherLogin(const std::string& username, const std::string& password, std::string& outError)
-{
-    Api::AuthResult res = Api::Login(username, password);
-    if (!res.success)
-    {
-        outError = res.error;
-        return false;
-    }
-    g_token = res.token;
-    g_username = res.username;
-    g_role = "User";
-    g_authenticated = true;
-
-    // Fetch owned products from webapp API.
-    g_ownedProducts = Api::GetUserLibrary(g_username);
-    return true;
-}
-
-bool remember;
 
 INT __stdcall WinMain(HINSTANCE, HINSTANCE, LPSTR, int)
 {
@@ -88,23 +38,7 @@ INT __stdcall WinMain(HINSTANCE, HINSTANCE, LPSTR, int)
     EIMAGE(window->Dvc, _Product, images->product);
     EIMAGE(window->Dvc, _DefaultProfilePic, images->profilePic);
 
-    HWND* hRef = &window->hWindow;
 
-    // Start background update check (non-blocking)
-    std::thread([]{
-        Updater::Manifest m;
-        if (Updater::FetchManifest(ApiConfig::GetLauncherManifestUrl(), m))
-        {
-            if (Updater::CompareVersions(ONYX_LAUNCHER_VERSION, m.version) < 0)
-            {
-                g_state.updateAvailable = true;
-                g_state.availableVersion = m.version;
-                g_state.availableUrl = m.url;
-                g_state.availableSha256 = m.sha256;
-            }
-        }
-        g_state.updateCheckDone = true;
-    }).detach();
 
     while (window->RenderLoop())
     {

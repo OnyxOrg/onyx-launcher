@@ -8,18 +8,9 @@ namespace ApiConfig
 	// Primary API host (Discord bot API)
 	inline const char* DefaultPrimary = "http://localhost:3000";
 
-	// Updater manifest URL (served by backend)
-	// The launcher will GET this path on the API base
-	inline const char* LauncherManifestPath = "/api/launcher/manifest";
-
 	inline std::string GetPrimaryBaseUrl()
 	{
 		return std::string(DefaultPrimary);
-	}
-
-	inline std::string GetLauncherManifestUrl()
-	{
-		return GetPrimaryBaseUrl() + std::string(LauncherManifestPath);
 	}
 
 	// Discord OAuth configuration (should match the webapp configuration)

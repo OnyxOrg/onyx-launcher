@@ -6,11 +6,12 @@
 
 namespace Api
 {
-	static bool TryLogin(const std::string& baseUrl, const std::string& username, const std::string& password, AuthResult& out)
+	AuthResult Login(const std::string& username, const std::string& password)
 	{
+		AuthResult result;
 		try
 		{
-			httplib::Client cli(baseUrl.c_str());
+			httplib::Client cli(ApiConfig::GetPrimaryBaseUrl().c_str());
 			cli.set_connection_timeout(2, 0);
 			cli.set_read_timeout(5, 0);
 			cli.set_write_timeout(5, 0);
@@ -24,46 +25,39 @@ namespace Api
 			auto res = cli.Post(path, body.dump(), "application/json");
 			if (!res)
 			{
-				out.error = "Connection failed";
-				return false;
+				result.error = "Connection failed";
+				return result;
 			}
 			if (res->status != 200)
 			{
 				nlohmann::json errj = nlohmann::json::parse(res->body, nullptr, false);
 				if (!errj.is_discarded() && errj.contains("message") && errj["message"].is_string())
-					out.error = errj["message"].get<std::string>();
+					result.error = errj["message"].get<std::string>();
 				else
-					out.error = "Login failed";
-				return false;
+					result.error = "Login failed";
+				return result;
 			}
 
 			nlohmann::json j = nlohmann::json::parse(res->body, nullptr, false);
 			if (j.is_discarded())
 			{
-				out.error = "Bad response";
-				return false;
+				result.error = "Bad response";
+				return result;
 			}
 
-			out.token = j.value<std::string>("token", "");
-			out.username = j.value<std::string>("username", username);
-			out.role = j.value<std::string>("role", "User");
-			out.success = !out.token.empty();
-			if (!out.success)
-				out.error = "Invalid token";
-			return out.success;
+			result.token = j.value<std::string>("token", "");
+			result.username = j.value<std::string>("username", username);
+			result.role = j.value<std::string>("role", "User");
+			result.success = !result.token.empty();
+			if (!result.success)
+				result.error = "Invalid token";
+			return result;
 		}
 		catch (...)
 		{
-			out.error = "Unexpected error";
-			return false;
+			result.error = "Unexpected error";
+			return result;
 		}
-	}
-
-	AuthResult Login(const std::string& username, const std::string& password)
-	{
-		AuthResult result;
-		(void)TryLogin(ApiConfig::GetPrimaryBaseUrl(), username, password, result);
-		return result;
 	}
 
 	AuthResult Register(const std::string& username, const std::string& password, const std::string& licenseKey)
