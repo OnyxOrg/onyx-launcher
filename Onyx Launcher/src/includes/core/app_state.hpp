@@ -45,6 +45,16 @@ struct AppState
 
 	// UI preferences
 	bool remember = false;
+
+	// Updater state
+	bool updateCheckDone = false;
+	bool updateAvailable = false;
+	std::string availableVersion;
+	std::string availableUrl;
+	std::string availableSha256;
+	bool downloadingUpdate = false;
+	float downloadProgress = 0.0f; // optional (not wired yet)
+	std::string updateError;
 };
 
 

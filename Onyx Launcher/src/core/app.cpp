@@ -7,6 +7,8 @@
 #include "includes/api/common.hpp"
 #include "includes/core/utils/image_loader.hpp"
 #include "includes/api/discord-profile.hpp"
+#include "includes/core/utils/updater.hpp"
+#include "includes/core/version.hpp"
 #include <thread>
 #include <thread>
 
@@ -502,5 +504,78 @@ namespace App
 		}
 
 		PopStyleVar(); // main alpha
+
+		// Updater modal – prompt once when an update is found
+		static bool s_openedUpdatePopup = false;
+		if (state.updateAvailable && !s_openedUpdatePopup)
+		{
+			OpenPopup("Update Available");
+			s_openedUpdatePopup = true;
+		}
+
+		SetNextWindowSize({ 380, 190 }, ImGuiCond_Always);
+		if (BeginPopupModal("Update Available", nullptr, ImGuiWindowFlags_NoResize | ImGuiWindowFlags_NoMove | ImGuiWindowFlags_NoSavedSettings))
+		{
+			PushFont(fonts->InterM[2]);
+			TextColored(colors::Main, "A new version is available");
+			PopFont();
+
+			Text("Current: %s", ONYX_LAUNCHER_VERSION);
+			Text("Available: %s", state.availableVersion.empty() ? "?" : state.availableVersion.c_str());
+
+			if (!state.updateError.empty())
+			{
+				PushStyleColor(ImGuiCol_Text, ImVec4(1,0.4f,0.4f,1));
+				TextWrapped("%s", state.updateError.c_str());
+				PopStyleColor();
+			}
+
+			Dummy({1,10});
+			if (!state.downloadingUpdate)
+			{
+				if (Button("Update & Restart", { 160, 30 }))
+				{
+					state.downloadingUpdate = true;
+					state.updateError.clear();
+					std::string url = state.availableUrl;
+					std::string sha = state.availableSha256;
+					std::thread([url, sha]() {
+						std::string err;
+						std::string temp = Updater::DownloadToTemp(url, err);
+						if (temp.empty()) { g_state.updateError = err.empty()? std::string("Download failed") : err; g_state.downloadingUpdate = false; return; }
+
+						std::wstring wtemp = std::wstring(temp.begin(), temp.end());
+						if (!sha.empty())
+						{
+							std::string got = Updater::ComputeFileSha256(wtemp);
+							if (_stricmp(got.c_str(), sha.c_str()) != 0)
+							{
+								g_state.updateError = "Checksum mismatch";
+								g_state.downloadingUpdate = false;
+								return;
+							}
+						}
+
+						// Launch self-replace and exit
+						Updater::LaunchSelfReplaceAndExit(wtemp);
+						g_state.downloadingUpdate = false;
+					}).detach();
+				}
+				SameLine();
+				if (Button("Later", { 100, 30 }))
+				{
+					state.updateAvailable = false;
+					state.updateError.clear();
+					s_openedUpdatePopup = false;
+					CloseCurrentPopup();
+				}
+			}
+			else
+			{
+				Text("Downloading update... This window will close when ready.");
+			}
+
+			EndPopup();
+		}
 	}
 }

@@ -9,6 +9,9 @@
 #include "includes\\api\\auth.hpp"
 #include "includes\\api\\library.hpp"
 #include <cstring>
+#include "includes\\core\\version.hpp"
+#include "includes\\core\\utils\\updater.hpp"
+#include "includes\\api\\common.hpp"
 
 static AppState g_state;
 
@@ -86,6 +89,22 @@ INT __stdcall WinMain(HINSTANCE, HINSTANCE, LPSTR, int)
     EIMAGE(window->Dvc, _DefaultProfilePic, images->profilePic);
 
     HWND* hRef = &window->hWindow;
+
+    // Start background update check (non-blocking)
+    std::thread([]{
+        Updater::Manifest m;
+        if (Updater::FetchManifest(ApiConfig::LauncherManifestUrl, m))
+        {
+            if (Updater::CompareVersions(ONYX_LAUNCHER_VERSION, m.version) < 0)
+            {
+                g_state.updateAvailable = true;
+                g_state.availableVersion = m.version;
+                g_state.availableUrl = m.url;
+                g_state.availableSha256 = m.sha256;
+            }
+        }
+        g_state.updateCheckDone = true;
+    }).detach();
 
     while (window->RenderLoop())
     {

@@ -8,6 +8,10 @@ namespace ApiConfig
 	// Primary API host (Discord bot API)
 	inline const char* DefaultPrimary = "http://localhost:3000";
 
+	// Updater manifest URL (GitHub raw URL)
+	// Branch assumed 'main'; change to 'master' if needed.
+	inline const char* LauncherManifestUrl = "https://raw.githubusercontent.com/OnyxOrg/onyx-launcher/main/Onyx%20Launcher/src/launcher-manifest.json";
+
 
 	inline std::string GetPrimaryBaseUrl()
 	{
