@@ -21,6 +21,17 @@ namespace ApiConfig
 		return GetPrimaryBaseUrl() + std::string("/api/auth/discord/redirect");
 	}
 
+	// Google OAuth configuration
+	inline const char* GoogleClientId = "981110484662-dc5caos3uec0nsc5u6av1a226qhjnjk7.apps.googleusercontent.com";
+	
+	// Note: Client secret should be stored securely on the backend server, not in the client application
+	// The client secret is only needed for server-side token exchange, not for the OAuth flow initiation
+
+	inline std::string GetGoogleRedirectUri()
+	{
+		return GetPrimaryBaseUrl() + std::string("/api/auth/google/redirect");
+	}
+
 	inline std::string BuildDiscordAuthorizeUrl(const std::string& rawState)
 	{
 		auto PercentEncode = [](const std::string& s) {
@@ -45,6 +56,13 @@ namespace ApiConfig
 		return url;
 	}
 
+	inline std::string BuildGoogleAuthorizeUrl(const std::string& rawState)
+	{
+		// Use the backend endpoint instead of direct Google OAuth
+		// This ensures consistent configuration and avoids client-side mismatches
+		return GetPrimaryBaseUrl() + std::string("/api/launcher/oauth/google/authorize?state=") + rawState;
+	}
+
 	// New helpers for launcher-initiated Discord login
 	inline std::string BuildLauncherDiscordLoginState(const std::string& nonce)
 	{
@@ -54,6 +72,12 @@ namespace ApiConfig
 	inline std::string BuildLauncherPollPath(const std::string& nonce)
 	{
 		return std::string("/api/launcher/oauth/poll?nonce=") + nonce;
+	}
+
+	// New helpers for launcher-initiated Google login
+	inline std::string BuildLauncherGoogleLoginState(const std::string& nonce)
+	{
+		return std::string("google_oauth:") + nonce;
 	}
 
 	// Build a Discord CDN avatar URL. If avatarHash is empty, return empty string.
@@ -67,5 +91,12 @@ namespace ApiConfig
 		_snprintf_s(buf, _TRUNCATE, "https://cdn.discordapp.com/avatars/%s/%s.%s?size=%d",
 			userId.c_str(), avatarHash.c_str(), isGif ? "gif" : "png", size);
 		return std::string(buf);
+	}
+
+	// Build a Google profile picture URL using the backend proxy
+	inline std::string BuildGoogleAvatarUrl(const std::string& pictureId)
+	{
+		if (pictureId.empty()) return std::string();
+		return GetPrimaryBaseUrl() + std::string("/api/google-avatar/") + pictureId;
 	}
 }

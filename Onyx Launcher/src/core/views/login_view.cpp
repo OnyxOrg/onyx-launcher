@@ -2,6 +2,7 @@
 #include <thread>
 #include "includes/api/common.hpp"
 #include "includes/api/auth-discord.hpp"
+#include "includes/api/auth-google.hpp"
 #include "includes/core/utils/image_loader.hpp"
 #include "includes/api/discord-profile.hpp"
 
@@ -117,7 +118,54 @@ void Views::RenderLogin(AppState& state, Alpha& alpha, Alpha& subalpha)
 	// Legacy positioning as before (left/right under separator)
 	float baseY = GetCursorPosY() - 5.0f;
 	SetCursorPos({ (window->Size.x * 0.5f - h->CT("or").x * 0.5f - length - distance + window->Size.x * 0.5f - h->CT("or").x * 0.5f - distance) * 0.5f, baseY });
-	(void)items->ImageButton("google", images->googleIcon, { 20, 20 });
+	if (items->ImageButton("google", images->googleIcon, { 20, 20 }))
+	{
+		std::string nonce, url;
+		if (Api::BeginGoogleLoginFlow(state.username, nonce, url))
+		{
+			state.isLoading = true;
+			state.loginState = 1;
+			std::wstring wurl(url.begin(), url.end());
+			std::thread([wurl] { ShellExecuteW(nullptr, L"open", wurl.c_str(), nullptr, nullptr, SW_SHOWNORMAL); }).detach();
+
+			// Poll asynchronously for token
+			std::thread([&state, nonce]() {
+				for (int i = 0; i < 80; ++i) // up to ~20s
+				{
+					auto res = Api::PollGoogleLoginOnce(nonce);
+					if (res.success)
+					{
+						state.token = res.token;
+						state.username = res.username;
+						state.role = res.role.empty() ? "User" : res.role;
+						state.authenticated = true;
+						state.ownedProducts = Api::GetUserLibrary(state.username);
+						// Prefetch user info (Discord and Google)
+						auto ui = Api::GetUserInfo(state.username);
+						if (ui.ok) { 
+							state.discordId = ui.discordId; 
+							state.discordUsername = ui.discordUsername; 
+							state.discordAvatarHash = ui.discordAvatar;
+							// Load Google avatar if available
+							if (!ui.googlePicture.empty()) {
+								std::string url = ApiConfig::BuildGoogleAvatarUrl(ui.googlePicture);
+								std::thread([url, &state]() {
+									ID3D11ShaderResourceView* srv = ImageLoader::LoadTextureFromUrl(url.c_str());
+									if (srv) state.avatarTexture = srv;
+								}).detach();
+							}
+						}
+						state.loginState = 2;
+						return;
+					}
+					if (res.error != "pending") break;
+					std::this_thread::sleep_for(std::chrono::milliseconds(250));
+				}
+				state.loginError = "Google sign-in cancelled";
+				state.loginState = 3;
+			}).detach();
+		}
+	}
 
 	SameLine();
 	SetCursorPosX((window->Size.x / 2 + h->CT("or").x / 2 + distance + length / 2) - 44);

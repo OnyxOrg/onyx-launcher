@@ -5,7 +5,7 @@
 
 namespace Api
 {
-	// GET /api/user/:username (from bot API) → returns discord info
+	// GET /api/user/:username (from bot API) → returns discord and google info
 	struct UserInfo
 	{
 		bool ok = false;
@@ -14,6 +14,10 @@ namespace Api
 		std::string discordUsername;
 		std::string discordAvatar; // hash only
 		bool discordConnected = false;
+		std::string googleId;
+		std::string googleUsername;
+		std::string googlePicture; // picture ID for avatar
+		bool googleConnected = false;
 		std::string role;
 		std::string createdVia;
 	};
