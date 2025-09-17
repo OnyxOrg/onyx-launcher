@@ -146,14 +146,7 @@ void Views::RenderLogin(AppState& state, Alpha& alpha, Alpha& subalpha)
 							state.discordId = ui.discordId; 
 							state.discordUsername = ui.discordUsername; 
 							state.discordAvatarHash = ui.discordAvatar;
-							// Load Google avatar if available
-							if (!ui.googlePicture.empty()) {
-								std::string url = ApiConfig::BuildGoogleAvatarUrl(ui.googlePicture);
-								std::thread([url, &state]() {
-									ID3D11ShaderResourceView* srv = ImageLoader::LoadTextureFromUrl(url.c_str());
-									if (srv) state.avatarTexture = srv;
-								}).detach();
-							}
+							state.createdVia = ui.createdVia;
 						}
 						state.loginState = 2;
 						return;
@@ -193,7 +186,12 @@ void Views::RenderLogin(AppState& state, Alpha& alpha, Alpha& subalpha)
 						state.ownedProducts = Api::GetUserLibrary(state.username);
 						// Prefetch discord info
 						auto ui = Api::GetUserInfo(state.username);
-						if (ui.ok) { state.discordId = ui.discordId; state.discordUsername = ui.discordUsername; state.discordAvatarHash = ui.discordAvatar; }
+						if (ui.ok) { 
+							state.discordId = ui.discordId; 
+							state.discordUsername = ui.discordUsername; 
+							state.discordAvatarHash = ui.discordAvatar;
+							state.createdVia = ui.createdVia;
+						}
 						state.loginState = 2;
 						return;
 					}
