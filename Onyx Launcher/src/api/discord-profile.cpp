@@ -23,6 +23,19 @@ namespace Api
 			if (j.is_discarded()) return info;
 			info.ok = true;
 			info.username = j.value<std::string>("username", username);
+			// Initialize Discord fields to empty by default
+			info.discordConnected = false;
+			info.discordId = "";
+			info.discordUsername = "";
+			info.discordAvatar = "";
+			
+			// Initialize Google fields to empty by default
+			info.googleConnected = false;
+			info.googleId = "";
+			info.googleUsername = "";
+			info.googlePicture = "";
+			
+			// Only populate Discord fields if Discord data exists
 			if (j.contains("discord") && j["discord"].is_object())
 			{
 				auto d = j["discord"];
@@ -30,6 +43,16 @@ namespace Api
 				info.discordId = d.value<std::string>("id", "");
 				info.discordUsername = d.value<std::string>("username", "");
 				info.discordAvatar = d.value<std::string>("avatar", "");
+			}
+			
+			// Only populate Google fields if Google data exists
+			if (j.contains("google") && j["google"].is_object())
+			{
+				auto g = j["google"];
+				info.googleConnected = g.value("connected", false);
+				info.googleId = g.value<std::string>("id", "");
+				info.googleUsername = g.value<std::string>("username", "");
+				info.googlePicture = g.value<std::string>("picture", "");
 			}
 			info.role = j.value<std::string>("role", "User");
 			info.createdVia = j.value<std::string>("createdVia", "manual");
