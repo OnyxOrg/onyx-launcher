@@ -4,6 +4,7 @@
 #include "includes/core/items/overlay.hpp"
 #include "includes/core/views/unlink-modal.hpp"
 #include "includes/api/common.hpp"
+#include "includes/api/announcements.hpp"
 #include "includes/core/utils/image_loader.hpp"
 #include "includes/api/discord-profile.hpp"
 #include <thread>
@@ -19,6 +20,12 @@ static constexpr float kLinkCancelFadeSeconds = 1.5f;
 static std::atomic<bool> g_pendingCancel{ false };
 static double g_pendingCancelStartTime = 0.0;
 static constexpr float kCancelDelaySeconds = 0.35f;
+
+// Announcements data
+static std::vector<Api::Announcement> g_announcements;
+static std::atomic<bool> g_announcementsLoaded{ false };
+static double g_lastAnnouncementFetch = 0.0;
+static constexpr float kAnnouncementFetchInterval = 30.0f; // Fetch every 30 seconds
 
 // Forward declare extended overlay API (header should also declare this)
 void RenderLoadingOverlayEx(const char* label, float alphaMultiplier);
@@ -73,6 +80,24 @@ vec4 GetRoleColor(const std::string& role) {
 
 namespace App
 {
+	void FetchAnnouncements()
+	{
+		double currentTime = ImGui::GetTime();
+		if (currentTime - g_lastAnnouncementFetch < kAnnouncementFetchInterval && g_announcementsLoaded)
+			return;
+
+		try
+		{
+			g_announcements = Api::GetAnnouncements();
+			g_announcementsLoaded = true;
+			g_lastAnnouncementFetch = currentTime;
+		}
+		catch (...)
+		{
+			// Ignore errors, keep existing announcements
+		}
+	}
+
 	void RenderFrame(AppState& state)
 	{
 		const auto& window = GetCurrentWindow();
@@ -176,6 +201,9 @@ namespace App
 
 			if (subalpha->tab == dashboard)
 			{
+				// Fetch announcements from API
+				FetchAnnouncements();
+
 				// Precompute welcome string so goto skip won't bypass initialization
 				std::string displayName = state.authenticated ? (state.discordUsername.empty() ? state.username : state.discordUsername) : std::string("relique");
 				std::string welcomeMsg = std::string("Welcome back, ") + displayName;
@@ -200,10 +228,14 @@ namespace App
 				{
 					PushStyleVarY(ImGuiStyleVar_ItemSpacing, 12);
 
-					items->Announcement("ONYX UPDATE 1.0", "Highlights: new dashboard, faster authentication, library improvements,\nperformance improvements, stability fixes, and a refreshed look.", "August 6, 2025", feature);
-					items->Announcement("ONYX UPDATE 0.4", "Improvements: account linking, refined installer, reduced CPU usage,\nfixed crashes when switching tabs and clearer error messages.", "August 6, 2025", updated);
-					items->Announcement("ONYX UPDATE 0.1", "Bug fixes: resolved login timeouts, license sync issues and UI clipping,\nand a smoother first-run experience.", "August 6, 2025", bugfix);
-					items->Announcement("ONYX UPDATE 0.3", "Maintenance: patched overlay memory leak, corrected theme colors,\nfixed broken dashboard links and minor layout glitches.", "August 6, 2025", bugfix);
+					// Render dynamic announcements
+					if (g_announcementsLoaded && !g_announcements.empty())
+					{
+						for (const auto& announcement : g_announcements)
+						{
+							items->Announcement(announcement.title, announcement.content, announcement.date, updated);
+						}
+					}
 					
 					Spacing();
 					PopStyleVar(); // itemspacing
