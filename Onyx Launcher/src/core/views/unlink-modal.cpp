@@ -80,6 +80,14 @@ namespace UI
 			float buttonsTop = GetWindowHeight() - bottomPadding - kButtonHeight - kLiftUp;
 			SetCursorPosY(buttonsTop);
 
+			// ESC key closes the modal (Cancel action)
+			if (IsKeyPressed(ImGuiKey_Escape))
+			{
+				// Start fade-out on cancel
+				s_fadingOut = true;
+				s_animStart = GetTime();
+			}
+
 			// Enter key triggers Unlink action
 			if (IsKeyPressed(ImGuiKey_Enter) || IsKeyPressed(ImGuiKey_KeypadEnter))
 			{

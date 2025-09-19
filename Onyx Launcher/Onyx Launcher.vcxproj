@@ -181,6 +181,7 @@
     <ClCompile Include="src\core\utils\credentials.cpp" />
   </ItemGroup>
   <ItemGroup>
+    <ClInclude Include="src\data\resource.h" />
     <ClInclude Include="src\includes\api\auth-discord.hpp" />
     <ClInclude Include="src\includes\api\auth-google.hpp" />
     <ClInclude Include="src\includes\api\auth.hpp" />
@@ -189,7 +190,6 @@
     <ClInclude Include="src\includes\core\utils\colors.hpp" />
     <ClInclude Include="src\data\fonts.h" />
     <ClInclude Include="src\data\images.h" />
-    
     <ClInclude Include="src\includes\core\functional\animations.hpp" />
     <ClInclude Include="src\includes\core\main.hpp" />
     <ClInclude Include="src\includes\core\items\custom.hpp" />
