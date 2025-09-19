@@ -452,18 +452,7 @@ namespace App
 							}
 							else
 							{
-								if (state.avatarTexture) { state.avatarTexture->Release(); state.avatarTexture = nullptr; }
-								state.discordAvatarHash.clear();
-								std::thread([&state]() {
-									Api::UnlinkDiscord(state.username);
-									Api::UserInfo ui = Api::GetUserInfo(state.username);
-									state.discordId = ui.discordConnected ? ui.discordId : std::string();
-									state.discordUsername = ui.discordConnected ? ui.discordUsername : std::string();
-									state.discordAvatarHash.clear();
-									if (state.avatarTexture) { state.avatarTexture->Release(); state.avatarTexture = nullptr; }
-									auto sync = Api::SyncRole(state.username, state.discordId);
-									if (sync.ok && !sync.role.empty()) state.role = sync.role;
-								}).detach();
+								state.showUnlinkConfirmationModal = true;
 							}
 						}
 						PopFont();
@@ -478,6 +467,9 @@ namespace App
 			// Only in Profile tab: show linking overlay and fades
 			if (subalpha->tab == profile)
 			{
+				// Render the unlink confirmation modal (if requested)
+				UI::RenderUnlinkConfirmationModal(state);
+				
 				// Render the unlink modal (if requested)
 				UI::RenderUnlinkModal(state);
 				// Stamp the start time on UI thread when we first see pending-cancel

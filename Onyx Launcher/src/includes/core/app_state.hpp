@@ -38,6 +38,7 @@ struct AppState
 	char unlinkPassBuf[42] = {0};
 	bool unlinkPassVisible = false;
 	char unlinkErrMsg[128] = {0};
+	bool showUnlinkConfirmationModal = false;
 	std::string loginError;
 	bool showPostLoginSpinner = false;
 	double postSpinnerEndTime = 0.0;
