@@ -22,8 +22,6 @@
     <ClCompile Include="src\core\functional\misc.cpp" />
     <ClCompile Include="src\core\functional\window.cpp" />
     <ClCompile Include="src\core\app.cpp" />
-    <ClCompile Include="src\core\auth_flow.cpp" />
-    <ClCompile Include="src\core\time_util.cpp" />
     <ClCompile Include="src\core\views\login_view.cpp" />
     <ClCompile Include="src\core\views\register_view.cpp" />
     <ClCompile Include="src\core\items\announcement.cpp" />
@@ -48,11 +46,16 @@
     <ClCompile Include="src\api\discord-profile.cpp" />
     <ClCompile Include="src\core\items\overlay.cpp" />
     <ClCompile Include="src\api\auth-discord.cpp" />
+    <ClCompile Include="src\api\auth-google.cpp" />
+    <ClCompile Include="src\api\announcements.cpp" />
+    <ClCompile Include="src\api\online-users.cpp" />
+    <ClCompile Include="src\core\functional\auth_flow.cpp" />
+    <ClCompile Include="src\core\utils\time_util.cpp" />
+    <ClCompile Include="src\core\views\unlink-modal.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="src\includes\api\auth.hpp" />
     <ClInclude Include="src\includes\api\common.hpp" />
-    <ClInclude Include="src\includes\core\colors.hpp" />
     <ClInclude Include="src\data\fonts.h" />
     <ClInclude Include="src\data\images.h" />
     <ClInclude Include="src\includes\core\functional\animations.hpp" />
@@ -60,8 +63,6 @@
     <ClInclude Include="src\includes\core\items\custom.hpp" />
     <ClInclude Include="src\includes\core\app.hpp" />
     <ClInclude Include="src\includes\core\app_state.hpp" />
-    <ClInclude Include="src\includes\core\auth_flow.hpp" />
-    <ClInclude Include="src\includes\core\time_util.hpp" />
     <ClInclude Include="src\includes\core\views\login_view.hpp" />
     <ClInclude Include="src\includes\core\views\register_view.hpp" />
     <ClInclude Include="src\headers\api\discord.hpp" />
@@ -138,8 +139,24 @@
     <ClInclude Include="src\includes\core\utils\image_loader.hpp" />
     <ClInclude Include="src\includes\core\items\overlay.hpp" />
     <ClInclude Include="src\includes\api\auth-discord.hpp" />
+    <ClInclude Include="src\includes\api\auth-google.hpp" />
+    <ClInclude Include="src\includes\core\utils\colors.hpp" />
+    <ClInclude Include="src\includes\core\functional\auth_flow.hpp" />
+    <ClInclude Include="src\includes\core\utils\time_util.hpp" />
+    <ClInclude Include="src\includes\core\views\unlink-modal.hpp" />
+    <ClInclude Include="resource.h" />
   </ItemGroup>
   <ItemGroup>
     <Library Include="src\modules\freetype\win64\freetype.lib" />
+  </ItemGroup>
+  <ItemGroup>
+    <ResourceCompile Include="Onyx Launcher.rc">
+      <Filter>Resource Files</Filter>
+    </ResourceCompile>
+  </ItemGroup>
+  <ItemGroup>
+    <Image Include="..\..\..\..\Pictures\onyx.ico">
+      <Filter>Resource Files</Filter>
+    </Image>
   </ItemGroup>
 </Project>
